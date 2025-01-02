@@ -4,7 +4,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="./css/bootstrap.rtl.css" rel="stylesheet" />
     <link rel="stylesheet" href="./css/style.css" />
-     <title>Document</title>
+    <script src="./js/settings.js"></script>
+    <script src="./js/JQuery.js"></script>
+    <script>
+      $(document).ready(function(){
+        loadSetting();
+      })
+    </script>
+    <title>Document</title>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
@@ -16,7 +23,7 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">مرکز فرمان</a>
+                <a class="nav-link active" aria-current="page" onclick="loadSetting()" href="#">مرکز فرمان</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">وضعیت دستگاه</a>
@@ -25,6 +32,12 @@
           </div>
         </div>
       </nav>
+      <div class="container-fluid">
+        <div id="demo">
+
+        </div>
+      </div>
     <script src="./js/bootstrap.min.js"></script>
+
 </body>
 </html>
