@@ -8,7 +8,8 @@ const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
 
 enum FILE_TYPE {
   HTML = 1,
-  JS
+  JS,
+  CSS
 } ;
 
 ESP8266WebServer server(80);
@@ -35,6 +36,8 @@ void setup() {
   // Serve HTML file
   //server.on("/", handleRoot);
   ManageRoutes("index.html", FILE_TYPE::HTML);
+  ManageRoutes("css/bootstrap.rtl.css", FILE_TYPE::CSS);
+  ManageRoutes("css/style.css", FILE_TYPE::CSS);
 
   server.begin();
   Serial.println("HTTP server started");
@@ -46,9 +49,10 @@ void loop() {
 
 void ManageRoutes(String fileName, FILE_TYPE type){
   //Serial.println("/"+fileName);
+  Uri uri = "/" + fileName;
   switch(type){
     case FILE_TYPE::HTML : 
-       server.on("/" + fileName,[ fileName ](){
+       server.on(uri,[ fileName ](){
             Serial.println(fileName);
             File file = SD.open("/" + fileName);  // Replace with your HTML file name
             if (file) {
@@ -71,6 +75,18 @@ void ManageRoutes(String fileName, FILE_TYPE type){
             }        
        });
        break;  
+   case FILE_TYPE::CSS :   
+       server.on("/" + fileName,[ fileName](){
+            Serial.println(fileName);
+            File file = SD.open("/" + fileName);  // Replace with your HTML file name
+            if (file) {
+              server.streamFile(file, "text/stylesheet");
+              file.close();
+            } else {
+              server.send(200, "text/stylesheet", "Failed to open CSS file");
+            }        
+       });
+       break;         
     default : 
        break;        
   }
