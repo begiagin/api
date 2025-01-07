@@ -5,7 +5,7 @@
     <link href="./css/bootstrap.rtl.css" rel="stylesheet" />
     <link rel="stylesheet" href="./css/style.css" />
     <script src="./js/settings.js"></script>
-
+    <script src="./js/JQuery.js"></script>
     <title>Document</title>
 </head>
 <body>
@@ -18,7 +18,7 @@
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
               <li class="nav-item">
-                <a class="nav-link active" aria-current="page" onclick="loadSetting()" href="#">مرکز فرمان</a>
+                <a class="nav-link active" aria-current="page" href="#">مرکز فرمان</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="#">وضعیت دستگاه</a>
@@ -28,8 +28,25 @@
         </div>
       </nav>
       <div class="container-fluid">
-        <div id="demo">
-
+        <div class="row">
+          <div class="col-3">
+            <div class="card text-white bg-success mb-3" style="max-width: 20rem;">
+              <div class="card-header">مقدار آنالوگ</div>
+              <div class="card-body">
+                <h6 class="card-title">بروزرسانی هر ۲ ثانیه یکبار</h6>
+                <p class="card-text" id="analog_data"></p>
+              </div>
+            </div>
+          </div>
+          <div class="col-3">
+            2
+          </div>
+          <div class="col-3">
+            3
+          </div>
+          <div class="col-3">
+            4
+          </div>
         </div>
       </div>
     <script src="./js/bootstrap.min.js"></script>
