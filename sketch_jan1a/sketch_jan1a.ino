@@ -2,6 +2,8 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <SD.h>
+#include <Arduino_JSON.h>
+#include "dev_api.h"
 
 const char* ssid = "MobileAP";          // Replace with your Wi-Fi SSID
 const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
@@ -45,10 +47,17 @@ void setup() {
   ManageRoutes("js/sensors.js", FILE_TYPE::JS);
   ManageRoutes("js/settings.js", FILE_TYPE::JS);
 
+  // Handle API Routes 
+  ManageAPI();
+  
   server.begin();
   Serial.println("HTTP server started");
 }
-
+void ManageAPI(){
+  server.on("/a2d", [](){
+    server.send(200,"application/json", readA2D());
+  });
+}
 void loop() {
   server.handleClient();
 }
