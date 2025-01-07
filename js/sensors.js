@@ -11,7 +11,7 @@ async function readA2D(){
             }
         };
         xhttp.open("GET","/a2d", true);
-        xhttp.send():
+        xhttp.send();
     }, 2000);
 
 }
