@@ -9,7 +9,8 @@ const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
 enum FILE_TYPE {
   HTML = 1,
   JS,
-  CSS
+  CSS, 
+  FONT
 } ;
 
 ESP8266WebServer server(80);
@@ -33,11 +34,16 @@ void setup() {
   Serial.println("Connected to WiFi");
   Serial.println(WiFi.localIP());
 
-  // Serve HTML file
-  //server.on("/", handleRoot);
+  // Initialize and Load all Required files to load WEB Dashboard
+  
   ManageRoutes("index.html", FILE_TYPE::HTML);
   ManageRoutes("css/bootstrap.rtl.css", FILE_TYPE::CSS);
   ManageRoutes("css/style.css", FILE_TYPE::CSS);
+  ManageRoutes("css/fonts/Vazir.ttf", FILE_TYPE::CSS);
+  ManageRoutes("js/bootstrap.min.js", FILE_TYPE::JS);
+  ManageRoutes("js/JQuery.js", FILE_TYPE::JS);
+  ManageRoutes("js/sensors.js", FILE_TYPE::JS);
+  ManageRoutes("js/settings.js", FILE_TYPE::JS);
 
   server.begin();
   Serial.println("HTTP server started");
@@ -68,7 +74,7 @@ void ManageRoutes(String fileName, FILE_TYPE type){
             Serial.println(fileName);
             File file = SD.open("/" + fileName);  // Replace with your HTML file name
             if (file) {
-              server.streamFile(file, "text/html");
+              server.streamFile(file, "text/javascript");
               file.close();
             } else {
               server.send(200, "text/plain", "Failed to open HTML file");
@@ -83,10 +89,23 @@ void ManageRoutes(String fileName, FILE_TYPE type){
               server.streamFile(file, "text/stylesheet");
               file.close();
             } else {
-              server.send(200, "text/stylesheet", "Failed to open CSS file");
+              server.send(200, "text/plain", "Failed to open CSS file");
             }        
        });
-       break;         
+       break;
+   case FILE_TYPE::FONT :   
+       server.on("/" + fileName,[ fileName](){
+            Serial.println(fileName);
+            File file = SD.open("/" + fileName);  // Replace with your HTML file name
+            if (file) {
+              server.streamFile(file, "application/x-font-ttf");
+              file.close();
+            } else {
+              server.send(200, "text/plain", "Failed to open font file");
+            }        
+       });
+
+       //application/x-font-ttf        
     default : 
        break;        
   }
