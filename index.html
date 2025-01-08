@@ -1,61 +1,136 @@
 <html lang="fa" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="./css/bootstrap.rtl.css" rel="stylesheet" />
     <link rel="stylesheet" href="./css/style.css" />
     <script src="./js/settings.js"></script>
     <script src="./js/JQuery.js"></script>
 
     <title>Document</title>
-</head>
-<body>
+  </head>
+  <body>
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-          <a class="navbar-brand" href="#">پولادنگار <strong class="text-success">وب</strong></a>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="#">مرکز فرمان</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link" href="#">وضعیت دستگاه</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
       <div class="container-fluid">
-        <div class="row">
-          <div class="col-3">
-            <div class="card text-white bg-success mb-3" style="max-width: 20rem;">
-              <div class="card-header">مقدار آنالوگ</div>
-              <div class="card-body">
-                <h6 class="card-title">بروزرسانی هر ۲ ثانیه یکبار</h6>
-                <p class="card-text" id="analog_data"></p>
-              </div>
+        <a class="navbar-brand" href="#"
+          >پولادنگار <strong class="text-success">وب</strong></a
+        >
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent"
+          aria-expanded="false"
+          aria-label="Toggle navigation"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#"
+                >مرکز فرمان</a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">وضعیت دستگاه</a>
+            </li>
+            <li class="nav-item">
+              <a
+                class="nav-link"
+                data-bs-toggle="offcanvas"
+                href="#offcanvasExample"
+                role="button"
+                aria-controls="offcanvasExample"
+                >تنظیمات</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-3">
+          <div class="card text-white bg-success mb-3" style="max-width: 20rem">
+            <div class="card-header">مقدار آنالوگ</div>
+            <div class="card-body">
+              <h6 class="card-title">بروزرسانی هر ۲ ثانیه یکبار</h6>
+              <p class="card-text" id="analog_data"></p>
             </div>
           </div>
-          <div class="col-3">
-            2
+        </div>
+        <div class="col-3">
+          <div class="card text-white bg-danger mb-3" style="max-width: 20rem">
+            <div class="card-header">وضعیت ارتباط دستکاه</div>
+            <div class="card-body">
+              <h6 class="card-title">ارتباط WIFI</h6>
+              <p class="card-text" id="wifi_addr"></p>
+            </div>
           </div>
-          <div class="col-3">
-            3
+        </div>
+        <div class="col-3">3</div>
+        <div class="col-3">4</div>
+      </div>
+      <div class="row">
+        <div
+          class="offcanvas offcanvas-start"
+          tabindex="-1"
+          id="offcanvasExample"
+          aria-labelledby="offcanvasExampleLabel"
+        >
+          <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">
+              بارگذاری نسخه
+            </h5>
+            <button
+              type="button"
+              class="btn-close text-reset"
+              data-bs-dismiss="offcanvas"
+              aria-label="Close"
+            ></button>
           </div>
-          <div class="col-3">
-            4
+          <div class="offcanvas-body">
+            <div class="row">
+              <div>فایل های داشبورد HTML</div>
+            </div>
+            <div class="row">
+              <div>
+                <label for="lstFileType" class="form-label mt-4">نوع فایل ارسالی به دستگاه</label>
+                <select class="form-select" id="lstFileType">
+                  <option value="1">HTML</option>
+                  <option value="2">CSS</option>
+                  <option value="3">JS</option>
+                  <option value="4">JSON</option>
+                  <option value="5">FIRRMWARE</option>
+                </select>
+              </div>
+            </div>
+            <div class="row">
+              
+                <label for="formFile" class="form-label mt-4"
+                  >فایل مربوط به دسته انتخاب شده را وارد نمائید</label
+                >
+                <input class="form-control" type="file" id="formFile" />
+              
+            </div>
+            <div class="row mt-3">
+              <button type="button" class="btn btn-success">تائید</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas" aria-label="Close">انصراف</button>
+
+            </div>
+            <hr />
           </div>
         </div>
       </div>
+    </div>
     <script src="./js/bootstrap.min.js"></script>
     <script src="./js/sensors.js"></script>
     <script>
-      $(document).ready(function(){
+      $(document).ready(function () {
         readA2D();
-      })
+      });
     </script>
-</body>
+  </body>
 </html>
