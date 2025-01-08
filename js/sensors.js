@@ -29,6 +29,7 @@ async function uploadFile() {
     xhr.onload = function() {  
       if (xhr.status === 200) {  
         console.log("File uploaded successfully");  
+        document.getElementById("dismiss_dialog").click();
       } else {  
         console.error("Upload failed");  
       }  

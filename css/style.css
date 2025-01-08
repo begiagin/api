@@ -14,5 +14,6 @@ body{
     font-family: 'Vazir';
 }
 .custom_color {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    word-wrap: break-word;
+    font-family: 'Courier New', Courier, monospace;
 }

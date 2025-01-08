@@ -87,18 +87,20 @@ void handleFileUpload(){
         SD.remove(fileName);
       }
       currentUploadFile = SD.open(fileName, FILE_WRITE);
-      Serial.println(fileName + " Created !");
+      //Serial.println(fileName + " Created !");
       break;
     case UPLOAD_FILE_WRITE :
+      //Serial.println(fileName + " is Writing !");
       if(currentUploadFile){
          currentUploadFile.write(upload.buf, upload.currentSize);
-         Serial.println(fileName + " is Writing !");
+         
       }  
       break;
     case UPLOAD_FILE_END : 
+      //Serial.println(fileName + " Creation Finished !");
        if(currentUploadFile){
         currentUploadFile.close();
-        Serial.println(fileName + " Creation Finished !");
+        
        }  
        break;
 
