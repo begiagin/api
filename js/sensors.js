@@ -16,6 +16,27 @@ async function readA2D(){
 
 }
 
+async function uploadFile() {  
+    var formData = new FormData();  
+    var fileField = document.getElementById("fileInput").files[0];  
+    var fileType = document.getElementById("lstFileType").value;
+
+    formData.append("file", fileField);  
+  
+    var xhr = new XMLHttpRequest();  
+    xhr.open("POST", "/upload?type="+fileType, true);  
+  
+    xhr.onload = function() {  
+      if (xhr.status === 200) {  
+        console.log("File uploaded successfully");  
+      } else {  
+        console.error("Upload failed");  
+      }  
+    };  
+  
+    xhr.send(formData);  
+  }  
+  
 
 async function readConnectionStatus() {
     const startDateTime = Date.now();

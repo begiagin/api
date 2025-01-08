@@ -10,8 +10,10 @@ const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
 
 enum FILE_TYPE {
   HTML = 1,
-  JS,
   CSS, 
+  JS,
+  JSON_FILE,
+  CONFIG,
   FONT
 } ;
 
@@ -53,14 +55,32 @@ void setup() {
   server.begin();
   Serial.println("HTTP server started");
 }
+
+
 void ManageAPI(){
   server.on("/a2d", [](){
     server.send(200,"application/json", readA2D());
   });
+  server.on("/upload", HTTP_POST, []() { 
+     
+    server.send(200); 
+  }, handleFileUpload);  
 }
 void loop() {
   server.handleClient();
 }
+  
+
+void handleFileUpload(){
+  HTTPUpload& upload = server.upload();
+  Serial.println(server.arg("type"));
+  if(upload.status == UPLOAD_FILE_START){
+    String fileName = upload.filename;
+    Serial.print("Upload Filename : ");
+    Serial.println(fileName);
+  }
+}
+
 
 void ManageRoutes(String fileName, FILE_TYPE type){
   //Serial.println("/"+fileName);
