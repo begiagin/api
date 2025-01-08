@@ -3,19 +3,22 @@
 #include <ESP8266WebServer.h>
 #include <SD.h>
 #include <Arduino_JSON.h>
+#include <FS.h>
 #include "dev_api.h"
 
 const char* ssid = "MobileAP";          // Replace with your Wi-Fi SSID
 const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
 
 enum FILE_TYPE {
-  HTML = 1,
+  HTML = 0,
   CSS, 
   JS,
   JSON_FILE,
   CONFIG,
   FONT
 } ;
+
+String DIR_PATH[] = {"/", "/css/", "/js/", "/json/", "/config/", "/css/fonts/"};
 
 ESP8266WebServer server(80);
 
@@ -63,7 +66,7 @@ void ManageAPI(){
   });
   server.on("/upload", HTTP_POST, []() { 
      
-    server.send(200); 
+    
   }, handleFileUpload);  
 }
 void loop() {
@@ -73,13 +76,30 @@ void loop() {
 
 void handleFileUpload(){
   HTTPUpload& upload = server.upload();
-  Serial.println(server.arg("type"));
-  if(upload.status == UPLOAD_FILE_START){
-    String fileName = upload.filename;
-    Serial.print("Upload Filename : ");
-    Serial.println(fileName);
+  FILE_TYPE ft = (FILE_TYPE)(server.arg("type").toInt());
+  String fileName = upload.filename;
+  fileName = DIR_PATH[(int)ft] + fileName;
+  
+  File file;
+  switch(upload.status){
+    case UPLOAD_FILE_START :
+      if(SD.exists((fileName))
+        SD.remove(fileName);
+      file = SD.open(fileName, FILE_WRITE);
+      break;
+    case UPLOAD_FILE_WRITE :
+      if(file){
+         file.write(upload.buf, upload.currentSize);
+      }  
+      break;
+    case UPLOAD_FILE_END : 
+       if(file){
+        file.close();
+       }  
+
   }
 }
+
 
 
 void ManageRoutes(String fileName, FILE_TYPE type){
