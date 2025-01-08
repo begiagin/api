@@ -1,13 +1,14 @@
-
+const SUCCESS = 200;
 // Tag id : A2D 
-async function readA2D(){
+ function readA2D(){
     const startDateTime = Date.now();
 
     setTimeout(() => {
         var xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function(){
             if(this.readyState === 4 && this.status === 200){
-                document.getElementById("analog_data").innerText = this.response.value;
+                const respObject = JSON.parse(this.response);
+                document.getElementById("analog_data").innerText = respObject.value;
             }
         };
         xhttp.open("GET","/a2d", true);
@@ -16,7 +17,7 @@ async function readA2D(){
 
 }
 
-async function uploadFile() {  
+ function uploadFile() {  
     var formData = new FormData();  
     var fileField = document.getElementById("fileInput").files[0];  
     var fileType = document.getElementById("lstFileType").value;
@@ -32,21 +33,22 @@ async function uploadFile() {
         document.getElementById("dismiss_dialog").click();
       } else {  
         console.error("Upload failed");  
-      }  
+      } 
     };  
   
     xhr.send(formData);  
   }  
   
 
-async function readConnectionStatus() {
+ function readConnectionStatus() {
     const startDateTime = Date.now();
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if(this.readyState === 4 && this.status === 200){
-
+            const respObject = JSON.parse(this.response);
+            document.getElementById("wifi_addr").innerText = "آدرس IP : " + " " + respObject.ip_addr;
         }
     }
-    xhttp.open("GET","/cn_info", true);
+    xhttp.open("GET","/con_info", true);
     xhttp.send();
 }

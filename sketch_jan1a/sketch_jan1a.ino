@@ -53,21 +53,26 @@ void setup() {
   ManageRoutes("js/settings.js", FILE_TYPE::JS);
 
   // Handle API Routes 
-  ManageAPI();
+  ManageAPI(WiFi);
   
   server.begin();
   Serial.println("HTTP server started");
 }
 
 
-void ManageAPI(){
+void ManageAPI(ESP8266WiFiClass mainWIFI){
+
   server.on("/a2d", [](){
     server.send(200,"application/json", readA2D());
   });
   server.on("/upload", HTTP_POST, []() { 
-     
+     server.send(200, "text/plain", "Upload Successfuly Done !");
     
   }, handleFileUpload);  
+
+    server.on("/con_info", [mainWIFI](){
+    server.send(200,"application/json", readConnectionProps(mainWIFI));
+  });
 }
 void loop() {
   server.handleClient();

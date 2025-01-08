@@ -9,4 +9,11 @@ String readA2D(){
    return jsonString;
 }
 
+String readConnectionProps(ESP8266WiFiClass wifi){
+   JSONVar WIFI ;
+   WIFI["ip_addr"] = wifi.localIP().toString();
+   String jsonString = JSON.stringify(WIFI);
+
+   return jsonString;
+}
  
