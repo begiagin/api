@@ -17,7 +17,7 @@ enum FILE_TYPE {
   CONFIG,
   FONT
 } ;
-
+File currentUploadFile;
 String DIR_PATH[] = {"/", "/css/", "/js/", "/json/", "/config/", "/css/fonts/"};
 
 ESP8266WebServer server(80);
@@ -80,26 +80,30 @@ void handleFileUpload(){
   String fileName = upload.filename;
   fileName = DIR_PATH[(int)ft] + fileName;
   
-  File file;
+  
   switch(upload.status){
     case UPLOAD_FILE_START :
-      if(SD.exists((fileName))
+      if(SD.exists(fileName)){
         SD.remove(fileName);
-      file = SD.open(fileName, FILE_WRITE);
+      }
+      currentUploadFile = SD.open(fileName, FILE_WRITE);
+      Serial.println(fileName + " Created !");
       break;
     case UPLOAD_FILE_WRITE :
-      if(file){
-         file.write(upload.buf, upload.currentSize);
+      if(currentUploadFile){
+         currentUploadFile.write(upload.buf, upload.currentSize);
+         Serial.println(fileName + " is Writing !");
       }  
       break;
     case UPLOAD_FILE_END : 
-       if(file){
-        file.close();
+       if(currentUploadFile){
+        currentUploadFile.close();
+        Serial.println(fileName + " Creation Finished !");
        }  
+       break;
 
   }
 }
-
 
 
 void ManageRoutes(String fileName, FILE_TYPE type){
@@ -108,7 +112,7 @@ void ManageRoutes(String fileName, FILE_TYPE type){
   switch(type){
     case FILE_TYPE::HTML : 
        server.on(uri,[ fileName ](){
-            Serial.println(fileName);
+            //Serial.println(fileName);
             File file = SD.open("/" + fileName);  // Replace with your HTML file name
             if (file) {
               server.streamFile(file, "text/html");
@@ -120,7 +124,7 @@ void ManageRoutes(String fileName, FILE_TYPE type){
        break;
     case FILE_TYPE::JS :   
        server.on("/" + fileName,[ fileName](){
-            Serial.println(fileName);
+            //Serial.println(fileName);
             File file = SD.open("/" + fileName);  // Replace with your HTML file name
             if (file) {
               server.streamFile(file, "text/javascript");
@@ -132,7 +136,7 @@ void ManageRoutes(String fileName, FILE_TYPE type){
        break;  
    case FILE_TYPE::CSS :   
        server.on("/" + fileName,[ fileName](){
-            Serial.println(fileName);
+            //Serial.println(fileName);
             File file = SD.open("/" + fileName);  // Replace with your HTML file name
             if (file) {
               server.streamFile(file, "text/stylesheet");
@@ -144,7 +148,7 @@ void ManageRoutes(String fileName, FILE_TYPE type){
        break;
    case FILE_TYPE::FONT :   
        server.on("/" + fileName,[ fileName](){
-            Serial.println(fileName);
+            //Serial.println(fileName);
             File file = SD.open("/" + fileName);  // Replace with your HTML file name
             if (file) {
               server.streamFile(file, "application/x-font-ttf");
