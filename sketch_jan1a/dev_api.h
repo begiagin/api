@@ -1,5 +1,7 @@
+#include "WString.h"
 
 #include <Arduino_JSON.h>
+#include <SD.h>
 
 String readA2D(){
    JSONVar A2D ;
@@ -17,3 +19,21 @@ String readConnectionProps(ESP8266WiFiClass wifi){
    return jsonString;
 }
  
+String getSDCardSize(SDClass sd) {  
+  uint32_t cardSize = sd.size();// Gets the size of the card in bytes  
+  uint32_t totalBytes = sd.();  
+
+  JSONVar sdinfo;
+  sdinfo["card_size"] = cardSize;
+  
+  String jsonString = JSON.stringify(sdinfo);
+  return jsonString;
+}  
+
+String readHW(){
+  JSONVar HW;
+  HW["hw_ver"] =ESP.getFullVersion() ;
+  String jsonString = JSON.stringify(HW);
+
+  return jsonString;
+}

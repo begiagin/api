@@ -52,3 +52,31 @@ const SUCCESS = 200;
     xhttp.open("GET","/con_info", true);
     xhttp.send();
 }
+
+
+function readHardwareInfo() {
+    const startDateTime = Date.now();
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if(this.readyState === 4 && this.status === 200){
+            const respObject = JSON.parse(this.response);
+            document.getElementById("hw_info").innerText = "نسخه سخت افزار : " + " " + respObject.hw_ver;
+        }
+    }
+    xhttp.open("GET","/hw_info", true);
+    xhttp.send();
+}
+
+function readSDInfo() {
+    const startDateTime = Date.now();
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if(this.readyState === 4 && this.status === 200){
+            const respObject = JSON.parse(this.response);
+            const sizeInMB = (respObject.card_size / 1024 / 1024 / 1024 )
+            document.getElementById("sd_info").innerText = "سایز استفاده شده : " + " " + sizeInMB + " مگابایت ";
+        }
+    }
+    xhttp.open("GET","/sd_info", true);
+    xhttp.send();
+}

@@ -6,8 +6,8 @@
 #include <FS.h>
 #include "dev_api.h"
 
-const char* ssid = "MobileAP";          // Replace with your Wi-Fi SSID
-const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
+const char* ssid = "Alireza Salehi";          // Replace with your Wi-Fi SSID
+const char* password = "1364123110";  // Replace with your Wi-Fi password
 
 enum FILE_TYPE {
   HTML = 0,
@@ -21,6 +21,7 @@ File currentUploadFile;
 String DIR_PATH[] = {"/", "/css/", "/js/", "/json/", "/config/", "/css/fonts/"};
 
 ESP8266WebServer server(80);
+
 
 void setup() {
   Serial.begin(115200);
@@ -53,14 +54,14 @@ void setup() {
   ManageRoutes("js/settings.js", FILE_TYPE::JS);
 
   // Handle API Routes 
-  ManageAPI(WiFi);
+  ManageAPI(WiFi, SD);
   
   server.begin();
   Serial.println("HTTP server started");
 }
 
 
-void ManageAPI(ESP8266WiFiClass mainWIFI){
+void ManageAPI(ESP8266WiFiClass mainWIFI, SDClass sd){
 
   server.on("/a2d", [](){
     server.send(200,"application/json", readA2D());
@@ -72,6 +73,14 @@ void ManageAPI(ESP8266WiFiClass mainWIFI){
 
     server.on("/con_info", [mainWIFI](){
     server.send(200,"application/json", readConnectionProps(mainWIFI));
+  });
+  
+    server.on("/hw_info", [](){
+    server.send(200,"application/json", readHW());
+  });
+
+      server.on("/sd_info", [sd](){
+    server.send(200,"application/json", getSDCardSize(sd));
   });
 }
 void loop() {
