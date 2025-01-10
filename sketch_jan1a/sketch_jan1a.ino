@@ -20,6 +20,7 @@ enum FILE_TYPE {
 } ;
 File currentUploadFile;
 String DIR_PATH[] = {"/", "/css/", "/js/", "/json/", "/config/", "/css/fonts/"};
+JSONVar PROG_CONF;
 
 ESP8266WebServer server(80);
 
@@ -44,8 +45,9 @@ void setup() {
   Serial.println(WiFi.localIP());
 
   // Read Configuration file 
-  readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG]);
-
+  PROG_CONF = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG]);
+  Serial.println(PROG_CONF["name"]);
+  
   // Initialize and Load all Required files to load WEB Dashboard  
   ManageRoutes("index.html", FILE_TYPE::HTML);
   ManageRoutes("css/bootstrap.rtl.css", FILE_TYPE::CSS);
