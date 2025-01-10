@@ -5,13 +5,14 @@
 #include <Arduino_JSON.h>
 #include <FS.h>
 #include "dev_api.h"
+#include "config_loader.h"
 
-const char* ssid = "Alireza Salehi";          // Replace with your Wi-Fi SSID
-const char* password = "1364123110";  // Replace with your Wi-Fi password
+const char* ssid = "MobileAP";          // Replace with your Wi-Fi SSID
+const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
 
 enum FILE_TYPE {
   HTML = 0,
-  CSS, c:\Users\MTB\Desktop\api\sketch_jan1a\connection.h
+  CSS, 
   JS,
   JSON_FILE,
   CONFIG,
@@ -42,8 +43,10 @@ void setup() {
   Serial.println("Connected to WiFi");
   Serial.println(WiFi.localIP());
 
-  // Initialize and Load all Required files to load WEB Dashboard
-  
+  // Read Configuration file 
+  readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG]);
+
+  // Initialize and Load all Required files to load WEB Dashboard  
   ManageRoutes("index.html", FILE_TYPE::HTML);
   ManageRoutes("css/bootstrap.rtl.css", FILE_TYPE::CSS);
   ManageRoutes("css/style.css", FILE_TYPE::CSS);
@@ -120,7 +123,6 @@ void handleFileUpload(){
 
   }
 }
-
 
 void ManageRoutes(String fileName, FILE_TYPE type){
   //Serial.println("/"+fileName);
