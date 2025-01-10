@@ -11,7 +11,7 @@ const char* password = "1364123110";  // Replace with your Wi-Fi password
 
 enum FILE_TYPE {
   HTML = 0,
-  CSS, 
+  CSS, c:\Users\MTB\Desktop\api\sketch_jan1a\connection.h
   JS,
   JSON_FILE,
   CONFIG,
