@@ -21,7 +21,7 @@ String readConnectionProps(ESP8266WiFiClass wifi){
  
 String getSDCardSize(SDClass sd) {  
   uint32_t cardSize = sd.size();// Gets the size of the card in bytes  
-  uint32_t totalBytes = sd.();  
+
 
   JSONVar sdinfo;
   sdinfo["card_size"] = cardSize;
