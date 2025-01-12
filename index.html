@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="./css/bootstrap.rtl.css" rel="stylesheet" />
     <link rel="stylesheet" href="./css/style.css" />
-   
+
     <script src="./js/JQuery.js"></script>
 
     <title>Document</title>
@@ -34,7 +34,14 @@
               >
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#ip_panel" data-bs-toggle="offcanvas" role="button" aria-controls="ip_panel" >وضعیت دستگاه</a>
+              <a
+                class="nav-link"
+                href="#ip_panel"
+                data-bs-toggle="offcanvas"
+                role="button"
+                aria-controls="ip_panel"
+                >وضعیت دستگاه</a
+              >
             </li>
             <li class="nav-item">
               <a
@@ -114,7 +121,9 @@
             </div>
             <div class="row">
               <div>
-                <label for="lstFileType" class="form-label mt-4">نوع فایل ارسالی به دستگاه</label>
+                <label for="lstFileType" class="form-label mt-4"
+                  >نوع فایل ارسالی به دستگاه</label
+                >
                 <select class="form-select" id="lstFileType">
                   <option value="0">HTML</option>
                   <option value="1">CSS</option>
@@ -125,24 +134,33 @@
               </div>
             </div>
             <div class="row">
-              
-                <label for="formFile" class="form-label mt-4"
-                  >فایل مربوط به دسته انتخاب شده را وارد نمائید</label
-                >
-                <input class="form-control" type="file" id="fileInput" />
-              
+              <label for="formFile" class="form-label mt-4"
+                >فایل مربوط به دسته انتخاب شده را وارد نمائید</label
+              >
+              <input class="form-control" type="file" id="fileInput" />
             </div>
             <div class="row mt-3">
-              <button type="button" class="btn btn-success" onclick="uploadFile()">تائید</button>
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas" aria-label="Close">انصراف</button>
-
+              <button
+                type="button"
+                class="btn btn-success"
+                onclick="uploadFile()"
+              >
+                تائید
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-bs-dismiss="offcanvas"
+                aria-label="Close"
+              >
+                انصراف
+              </button>
             </div>
             <hr />
           </div>
         </div>
       </div>
       <div class="row">
-        
         <div
           class="offcanvas offcanvas-start"
           tabindex="-1"
@@ -150,9 +168,7 @@
           aria-labelledby="offcanvasExampleLabel"
         >
           <div class="offcanvas-header">
-            <h5 class="offcanvas-title" id="ip_panelLabel">
-               تنظیمات شبکه 
-                          </h5>
+            <h5 class="offcanvas-title" id="ip_panelLabel">تنظیمات شبکه</h5>
             <button
               type="button"
               id="dismiss_dialog"
@@ -164,48 +180,112 @@
 
           <div class="offcanvas-body">
             <div class="row">
-              <div>تنظیمات مربوط به آدرس IP </div>
+              <div>تنظیمات مربوط به آدرس IP</div>
             </div>
 
             <div class="row">
-              <form> 
+              <form>
                 <div class="form-check form-switch mt-4">
-                  <input class="form-check-input" type="checkbox" id="rbHotspot"  onclick="rbChangeWIFIMode()" />
-                  <label class="form-check-label" for="flexSwitchCheckChecked">تغییر به حالت Hotstpot </label>
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    id="rbHotspot"
+                  />
+                  <label class="form-check-label" for="flexSwitchCheckChecked"
+                    >تغییر به حالت Hotstpot
+                  </label>
                 </div>
-                <div class="form-group mt-2"> 
-                  <input type="text" class="form-control" id="ipAddress" placeholder="IP Address" /> 
-                </div> 
-                <div class="form-group mt-1"> 
-                  <input type="text" class="form-control" id="gateway" placeholder="Gateway" /> 
-                </div> 
-                <div class="form-group mt-1"> 
-                  <input type="text" class="form-control" id="subnetMask" placeholder="Subnet Mask" /> 
-                </div> 
-                <hr />
-                <div class="form-group mt-1"> 
-                  <input type="text" class="form-control" id="primaryDNS" placeholder="Primary DNS"> 
-                </div> 
-                <div class="form-group mt-1"> 
-                  <input type="text" class="form-control" id="secondaryDNS" placeholder="Secondary DNS" /> 
+                <div class="form-group mt-2">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="ipAddress"
+                    placeholder="IP Address"
+                  />
                 </div>
-           </div>
-           <div class="row">
-            <div class="col-6">
-                <button type="button" class="btn btn-success" style="width: 100%;">تائید</button>
-            </div>
-            <div class="col-6">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="offcanvas" aria-label="Close"  style="width: 100%;">انصراف</button>
-            </div>
-         </div>
-           </div>
+                <div class="form-group mt-1">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="gateway"
+                    placeholder="Gateway"
+                  />                </div>
+                <div class="form-group mt-1">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="subnetMask"
+                    placeholder="Subnet Mask"
+                  />
+                </div>
 
-
+                <div class="form-group mt-1">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="primaryDNS"
+                    placeholder="Primary DNS"
+                  />
+                </div>
+                <div class="form-group mt-1">
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="secondaryDNS"
+                    placeholder="Secondary DNS"
+                  />
+                </div>
+              </form>
+            </div>
+            <hr class="mt-2 mb-2" />
+            <div class="row" id="wifi_panel">
+              <h6>تنظیمات WIFI</h6>
+              <div class="form-group mt-1">
+                <input
+                  type="text"
+                  class="form-control"
+                  id="wifi_name"
+                  placeholder="نام WIFI"
+                />
+              </div>
+              <div class="form-group mt-1">
+                <input
+                  type="password"
+                  class="form-control"
+                  id="wifi_pass"
+                  placeholder="رمز شبکه"
+                />
+              </div>
+            </div>
+            <div class="row mt-4">
+              <div class="col-6">
+                <button
+                  onclick="makeWifiConfigJSON()"
+                  type="button"
+                  class="btn btn-success"
+                  style="width: 100%"
+                >
+                  تائید
+                </button>
+              </div>
+              <div class="col-6">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="offcanvas"
+                  aria-label="Close"
+                  style="width: 100%"
+                >
+                  انصراف
+                </button>
+              </div>
+            </div>
           </div>
+
+        </div>
       </div>
-   
     </div>
-    
+
     <script src="./js/bootstrap.min.js"></script>
     <script src="./js/sensors.js"></script>
     <script src="./js/settings.js"></script>

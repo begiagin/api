@@ -36,7 +36,9 @@ void setup() {
   Serial.println("SD card initialized.");
 
   // Connect to Wi-Fi
+  
   WiFi.begin(ssid, password);
+  
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting to WiFi...");
@@ -47,7 +49,7 @@ void setup() {
   // Read Configuration file 
   PROG_CONF = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG]);
   Serial.println(PROG_CONF["name"]);
-  
+
   // Initialize and Load all Required files to load WEB Dashboard  
   ManageRoutes("index.html", FILE_TYPE::HTML);
   ManageRoutes("css/bootstrap.rtl.css", FILE_TYPE::CSS);
