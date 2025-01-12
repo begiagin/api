@@ -195,19 +195,31 @@
                     >تغییر به حالت Hotstpot
                   </label>
                 </div>
-                <div class="form-group mt-2">
-                  <input
-                    type="text"
-                    class="form-control"
-                    id="ipAddress"
-                    placeholder="IP Address"
-                  />
+                <div class="row">
+                  <div class="form-group mt-2 col-7">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="ipAddress"
+                      placeholder="IP Address"
+                    />
+                  </div>
+                  <div class="form-group mt-2 col-5">
+                    <select class="form-select" id="lstFileType">
+                      <option value="0">HTML</option>
+                      <option value="1">CSS</option>
+                      <option value="2">JS</option>
+                      <option value="3">JSON</option>
+                      <option value="4">FIRRMWARE</option>
+                    </select>
+                  </div>
                 </div>
                 <div class="form-group mt-1">
                   <input
                     type="text"
                     class="form-control"
                     id="gateway"
+                    disabled
                     placeholder="Gateway"
                   />                </div>
                 <div class="form-group mt-1">
@@ -215,6 +227,7 @@
                     type="text"
                     class="form-control"
                     id="subnetMask"
+                    disabled
                     placeholder="Subnet Mask"
                   />
                 </div>
@@ -223,6 +236,7 @@
                   <input
                     type="text"
                     class="form-control"
+                    
                     id="primaryDNS"
                     placeholder="Primary DNS"
                   />
