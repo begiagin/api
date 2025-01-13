@@ -1,4 +1,5 @@
 
+
 // Load Config file from Local file Reside in OS File Structure 
 // Alireza Salehi
 
@@ -10,6 +11,7 @@ function loadSetting(){
     }
     xhttp.open("GET", "ajax_info.txt");
     xhttp.send();
+    
 }
 
 
@@ -74,3 +76,17 @@ async function makeWifiConfigJSON(){
     return JSONConfig;
 
 }
+
+document.getElementById('ipAddress').addEventListener("keypress", function(evt){
+    //console.log(evt);
+    if ((evt.key < '0' || evt.key > '9') && evt.key !== '.') {
+        event.preventDefault()
+      }
+});
+
+function isValidIP(ipaddress) {  
+    if (/^(25[0-5]|2[0-4][0-9]|[1]?[1-9][1-9]?)\.(25[0-5]|2[0-4][0-9]|[1]?[1-9][1-9]?)\.(25[0-5]|2[0-4][0-9]|[1]?[1-9][1-9]?)\.(25[0-5]|2[0-4][0-9]|[1]?[1-9][1-9]?)$/.test(ipaddress)) {  
+      return (true)  
+    }   
+    return (false) 
+} 

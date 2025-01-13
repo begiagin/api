@@ -1,122 +1,317 @@
-// Alireza Salehi
-function IPv4_Address( addressDotQuad, netmaskBits ) {
-	var split = addressDotQuad.split( '.', 4 );
-	var byte1 = Math.max( 0, Math.min( 255, parseInt( split[0] ))); /* sanity check: valid values: = 0-255 */
-	var byte2 = Math.max( 0, Math.min( 255, parseInt( split[1] )));
-	var byte3 = Math.max( 0, Math.min( 255, parseInt( split[2] )));
-	var byte4 = Math.max( 0, Math.min( 255, parseInt( split[3] )));
-	if( isNaN( byte1 )) {	byte1 = 0;	}	/* fix NaN situations */
-	if( isNaN( byte2 )) {	byte2 = 0;	}
-	if( isNaN( byte3 )) {	byte3 = 0;	}
-	if( isNaN( byte4 )) {	byte4 = 0;	}
-	addressDotQuad = ( byte1 +'.'+ byte2 +'.'+ byte3 +'.'+ byte4 );
+var nAddr = new Array(10,0,0,0);
+var nMask = new Array(255,0,0,0);
 
-	this.addressDotQuad = addressDotQuad.toString();
-	this.netmaskBits = Math.max( 0, Math.min( 32, parseInt( netmaskBits ))); /* sanity check: valid values: = 0-32 */
-	
-	this.addressInteger = IPv4_dotquadA_to_intA( this.addressDotQuad );
-//	this.addressDotQuad  = IPv4_intA_to_dotquadA( this.addressInteger );
-	this.addressBinStr  = IPv4_intA_to_binstrA( this.addressInteger );
-	
-	this.netmaskBinStr  = IPv4_bitsNM_to_binstrNM( this.netmaskBits );
-	this.netmaskInteger = IPv4_binstrA_to_intA( this.netmaskBinStr );
-	this.netmaskDotQuad  = IPv4_intA_to_dotquadA( this.netmaskInteger );
-	
-	this.netaddressBinStr = IPv4_Calc_netaddrBinStr( this.addressBinStr, this.netmaskBinStr );
-	this.netaddressInteger = IPv4_binstrA_to_intA( this.netaddressBinStr );
-	this.netaddressDotQuad  = IPv4_intA_to_dotquadA( this.netaddressInteger );
-	
-	this.netbcastBinStr = IPv4_Calc_netbcastBinStr( this.addressBinStr, this.netmaskBinStr );
-	this.netbcastInteger = IPv4_binstrA_to_intA( this.netbcastBinStr );
-	this.netbcastDotQuad  = IPv4_intA_to_dotquadA( this.netbcastInteger );
-}
-
-// Alireza Salehi
-function IPv4_dotquadA_to_intA( strbits ) {
-	var split = strbits.split( '.', 4 );
-	var myInt = (
-		parseFloat( split[0] * 16777216 )	/* 2^24 */
-	  + parseFloat( split[1] * 65536 )		/* 2^16 */
-	  + parseFloat( split[2] * 256 )		/* 2^8  */
-	  + parseFloat( split[3] )
-	);
-	return myInt;
-}
-
-
-function IPv4_intA_to_dotquadA( strnum ) {
-	var byte1 = ( strnum >>> 24 );
-	var byte2 = ( strnum >>> 16 ) & 255;
-	var byte3 = ( strnum >>>  8 ) & 255;
-	var byte4 = strnum & 255;
-	return ( byte1 + '.' + byte2 + '.' + byte3 + '.' + byte4 );
-}
-
-/* integer IP to binary string representation */
-// Alireza Salehi
-function IPv4_intA_to_binstrA( strnum ) {
-	var numStr = strnum.toString( 2 ); /* Initialize return value as string */
-	var numZeros = 32 - numStr.length; /* Calculate no. of zeros */
-	if (numZeros > 0) {	for (var i = 1; i <= numZeros; i++) { numStr = "0" + numStr }	} 
-	return numStr;
-}
-
-/* binary string IP to integer representation */
-// Alireza Salehi
-function IPv4_binstrA_to_intA( binstr ) {
-	return parseInt( binstr, 2 );
-}
-
-/* convert # of bits to a string representation of the binary value */
-// Alireza Salehi
-function IPv4_bitsNM_to_binstrNM( bitsNM ) {
-	var bitString = '';
-	var numberOfOnes = bitsNM;
-	while( numberOfOnes-- ) bitString += '1'; /* fill in ones */
-	numberOfZeros = 32 - bitsNM;
-	while( numberOfZeros-- ) bitString += '0'; /* pad remaining with zeros */
-	return bitString;
-}
-
-// Alireza Salehi
-function IPv4_Calc_netaddrBinStr( addressBinStr, netmaskBinStr ) {
-	var netaddressBinStr = '';
-	var aBit = 0; var nmBit = 0;
-	for( pos = 0; pos < 32; pos ++ ) {
-		aBit = addressBinStr.substr( pos, 1 );
-		nmBit = netmaskBinStr.substr( pos, 1 );
-		if( aBit == nmBit ) {	netaddressBinStr += aBit.toString();	}
-		else{	netaddressBinStr += '0';	}
+	function displayInfo() {
+		try {
+			document.getElementById("network").value = nAddr[0]+"."+nAddr[1]+"."+nAddr[2]+"."+nAddr[3];
+			document.getElementById("mask").value = nMask[0]+"."+nMask[1]+"."+nMask[2]+"."+nMask[3];
+			var wc = wildcardMask(nMask);
+			document.getElementById("wildcard").value = wc[0]+"."+wc[1]+"."+wc[2]+"."+wc[3];
+			var cidr = octet2cidr(nMask);
+			document.getElementById("maskbits").value = cidr;
+			document.getElementById("bitmap").value = subnetBitmap(nAddr,nMask);
+			document.getElementById("hosts").value = hostCount(nMask);
+			var aSubnet = subnetID(nAddr,nMask);
+			document.getElementById("subnetID").value = aSubnet[0]+"."+aSubnet[1]+"."+aSubnet[2]+"."+aSubnet[3];
+			var aBcast = broadcast(nAddr,wc);
+			document.getElementById("broadcast").value = aBcast[0]+"."+aBcast[1]+"."+aBcast[2]+"."+aBcast[3];
+			var aStart = startingIP(nAddr,nMask);
+			document.getElementById("startIP").value = aStart[0]+"."+aStart[1]+"."+aStart[2]+"."+aStart[3];
+			var aEnd = endingIP(nAddr,wc);
+			document.getElementById("endIP").value = aEnd[0]+"."+aEnd[1]+"."+aEnd[2]+"."+aEnd[3];
+			populateMaskSelect( document.getElementById('maskSelect'), nAddr, nMask[0]+"."+nMask[1]+"."+nMask[2]+"."+nMask[3]);
+			populateHostsSelect( document.getElementById('hostsSelect'), nAddr,cidr);
+		} catch(e) {
+			if( confirm("Error: Debug the stack trace?") ) {
+				stackTrace(e);
+			}
+		}
 	}
-	return netaddressBinStr;
-}
 
-/* logical OR between address & NOT netmask */
-// Alireza Salehi
-function IPv4_Calc_netbcastBinStr( addressBinStr, netmaskBinStr ) {
-	var netbcastBinStr = '';
-	var aBit = 0; var nmBit = 0;
-	for( pos = 0; pos < 32; pos ++ ) {
-		aBit = parseInt( addressBinStr.substr( pos, 1 ));
-		nmBit = parseInt( netmaskBinStr.substr( pos, 1 ));
-		
-		if( nmBit ) {	nmBit = 0;	}	/* flip netmask bits */
-		else{	nmBit = 1;	}
-		
-		if( aBit || nmBit ) {	netbcastBinStr += '1'	}
-		else{	netbcastBinStr += '0';	}
+	function wildcardMask(aMask){
+		var a = new Array(0,0,0,0);
+		for(var i=0;i<4;i++){
+			a[i] = 255 - aMask[i];
+		}
+		return a;
 	}
-	return netbcastBinStr;
-}
 
-// Alireza Salehi
-function IPv4_BitShiftLeft( mask, bits ) {
-	return ( mask * Math.pow( 2, bits ) );
-}
+	function endingIP(aNet,aWild){
+		// work around int32
+		var a = new broadcast(aNet,aWild);
+		var d = octet2dec(a);
+		d = d-1;
+		return dec2octet(d);
+	}
 
-/* used for display purposes */
-// Alireza Salehi
-function IPv4_BinaryDotQuad( binaryString ) {
-	return ( binaryString.substr( 0, 8 ) +'.'+ binaryString.substr( 8, 8 ) +'.'+ binaryString.substr( 16, 8 ) +'.'+ binaryString.substr( 24, 8 ) );
-}
+	function broadcast(aNet,aWild){
+		// work around int32
+		var a = new Array(0,0,0,0);
+		for(var i=0;i<4;i++){
+			a[i] = aNet[i] | aWild[i];
+		}
+		return a;
+	}
 
+	function startingIP(aNet,aMask){
+		var a = subnetID(aNet,aMask);
+		var d = octet2dec(a);
+		d = d+1;
+		return dec2octet(d);
+	}
+
+	function subnetID(aNet,aMask){
+		var a = new Array(0,0,0,0);
+		for(var i=0;i<4;i++){
+			a[i] = aNet[i] & aMask[i];
+		}
+		return a;
+	}
+	function hostCount(aMask) {
+		var bits = 32 - octet2cidr(aMask);
+		// get # of addresses in network and subtract 2
+		return Math.pow(2,bits) -2;
+	}
+	function octet2cidr(aMask) {
+		var mask = octet2dec(aMask);
+		// get binary string
+		mask = mask.toString(2);
+		// return mask length
+		return mask.indexOf(0);
+	}
+
+	function subnetBitmap(aNet,aMask){
+		var map = "";
+		var i = 0;
+		var cidr = octet2cidr(aMask);
+		if( aNet[0] >= 1 && aNet[0] <= 126 ) {
+			//class A
+			map = "0nnnnnnn";
+			i = map.length;
+		} else if( aNet[0] >= 128 && aNet[0] <= 191 ){
+			//class B
+			map = "10nnnnnn.nnnnnnnn";
+			i = map.length-1;
+		} else if( aNet[0] >= 192 && aNet[0] <= 223 ){
+			//class C
+			map = "110nnnnn.nnnnnnnn.nnnnnnnn";
+			i = map.length-2;
+		}
+		// subnet bits
+		while(i < cidr) {
+			if(i%8 == 0) map+=".";
+			map += "s";
+			i++;
+		}
+		// host bits
+		while(i < 32) {
+			if(i%8 == 0) map+=".";
+			map += "h";
+			i++;
+		}
+
+		return map;
+	}
+	function cidr2octet(bits) {
+		var bits = parseInt(bits);
+		if( bits < 0 | bits > 32 ) {
+			alert("Invalid 32 bit DIDR mask.  You entered "+bits);
+			return false;
+		}
+		// make up our mask
+		var ones = "11111111111111111111111111111111";
+		var mask = parseInt(ones.substring(0,bits),2);
+		var shift = 32-bits;
+
+		mask = mask * Math.pow(2,shift);
+
+		return dec2octet(mask);
+	}
+
+	function octet2dec(a){
+		//alert("octet2dec1 "+a[0]+"\n"+dec2bin(a[0])+"\n"+dec2bin(a[0] * 16777216));
+		var d = 0;
+		d = d + parseInt(a[0]) * 16777216 ;  //Math.pow(2,24);
+		d = d + a[1] * 65536;	  //Math.pow(2,16);
+		d = d + a[2] * 256;	   //Math.pow(2,8);
+		d = d + a[3];
+		return d;
+	}
+
+	function dec2octet(d){
+		//alert("d="+d+" "+d.toString(2)+"="+d.toString(2).substring(0,8)+"="+parseInt(d.toString(2).substring(0,8),2));
+		var zeros = "00000000000000000000000000000000";
+		var b = d.toString(2);
+		var b = zeros.substring(0,32-b.length) + b;
+		var a = new Array(
+			parseInt(b.substring(0,8),2)	
+			, (d & 16711680)/65536	  
+			, (d & 65280)/256		 
+			, (d & 255)
+			);		  //Math.pow(2,8);
+		return a;
+	}
+
+	function dec2bin(d) {
+		var b = d.toString(2);
+		return b;
+	}
+	function bin2dec(b) {
+		return parseInt(b,2);
+	}
+	function calculateClass( c ) {
+		switch(c)
+		{
+			case "B":
+				nAddr = new Array(172,168,0,1);
+				nMask = new Array(255,255,0,0);
+				break;
+			case "C":
+				nAddr = new Array(192,168,0,1);
+				nMask = new Array(255,255,255,0);
+				break;
+			default:
+				// default to class A
+				nAddr = new Array(10,0,0,1);
+				nMask = new Array(255,0,0,0);
+				break;
+		}
+		displayInfo();
+	}
+
+
+	function calculateIPCIDR(ip) {
+
+
+		var ipa = ip.split('/');
+		if( ipa.length = 2 ) {
+			var a = ipa[0].split('.');
+			nAddr[0] = parseInt(a[0]);
+			nAddr[1] = parseInt(a[1]);
+			nAddr[2] = parseInt(a[2]);
+			nAddr[3] = parseInt(a[3]);
+			nMask = cidr2octet(ipa[1]);
+		} else {
+			nAddr = ip.split('.');
+		}
+		displayInfo();
+	}
+	
+	function calculateSubnet(mask) {
+		var a = mask.split('.');
+		nMask[0] = parseInt(a[0]);
+		nMask[1] = parseInt(a[1]);
+		nMask[2] = parseInt(a[2]);
+		nMask[3] = parseInt(a[3]);
+		displayInfo();
+	}
+	function calculateHosts(cidr) {
+		nMask = cidr2octet(cidr);
+		displayInfo();
+	}
+
+	// functions to build drop downs
+	function populateMaskSelect( s, aNet, maskString) {
+		s.length = 0;
+		var a = new Array(0,0,0,0);
+		var i = 0;
+		if( aNet[0] >= 1 && aNet[0] <= 126 ) {
+			//class A
+			a[i++] = 255;
+		} else if( aNet[0] >= 128 && aNet[0] <= 191 ){
+			//class B
+			a[i++] = 255;
+			a[i++] = 255;
+		} else if( aNet[0] >= 192 && aNet[0] <= 223 ){
+			//class C
+			a[i++] = 255;
+			a[i++] = 255;
+			a[i++] = 255;
+		}
+
+		while( i < 4 ) {
+			var t = a[0]+"."+a[1]+"."+a[2]+"."+a[3];
+			addOption(s,t,t);
+			var pow = 7;
+			while(pow >= 0 && !(i==3 && pow<2 )) {
+				a[i] = a[i] + Math.pow(2,pow);
+				t = a[0]+"."+a[1]+"."+a[2]+"."+a[3];
+				addOption(s,t,t);
+				pow--;
+			}
+			i++;
+		}
+		selectOption(s,maskString);
+	}
+	function populateHostsSelect(s,aNet,cidr){
+		s.length = 0;
+		var pow = 8;
+		if( aNet[0] >= 1 && aNet[0] <= 126 ) {
+			//class = 'A';
+			pow = 24;
+		} else if( aNet[0] >= 128 && aNet[0] <= 191 ){
+			//class = 'B';
+			pow = 16;
+		} else if( aNet[0] >= 192 && aNet[0] <= 223 ){
+			//class = 'C';
+			pow = 8;
+		}
+		var t = 2;
+		while(pow > 2 ) {
+			t = Math.pow(2,pow) -2;
+			addOption(s,t,32-pow);
+			pow--;
+		}
+		selectOption(s,cidr);
+	}
+	function addOption(s,t,v){
+		var o = document.createElement('option');
+		o.text = t;
+		o.value = v;
+		try {
+			s.add(o, null); // standards compliant; doesn't work in IE
+		} catch(e) {
+			s.add(o); // IE only
+		}
+	}
+	function selectOption(s,v){
+		for (var i=0;i<s.length;i++){
+			if(s[i].value == v){
+				s.selectedIndex = i;
+				break;
+			}
+		}
+	}
+	
+	// displays a stack trace for an exception
+	function stackTrace( e ) {
+		var r = '';
+		for (var p in e) {
+			r += p + ': ' + e[p] + '\n';
+		}
+		alert(r);
+		//console.log, console.debug, console.info, console.warn, and console.error.
+	}
+
+	function tableBuilder(div){
+		var d = document.getElementById(div);
+		d.innerHTML = "";
+		var t = document.createElement("table");
+		t.border = 1;
+		var b = document.createElement("tbody");
+		var r = null;
+		var c = null;
+		d.appendChild(t);
+		for(var i=0;i<10;i++) {
+			r = document.createElement("tr");
+			for(var j=0;j<8;j++){
+				c=document.createElement("td");
+				var txt = document.createTextNode(i+":"+j);
+				c.appendChild(txt);
+				r.appendChild(c);
+			}
+			b.appendChild(r);
+		}
+		t.appendChild(b);
+		d.appendChild(t);
+	}
