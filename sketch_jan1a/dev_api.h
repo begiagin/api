@@ -3,6 +3,8 @@
 #include <Arduino_JSON.h>
 #include <SD.h>
 
+JSONVar RAM_CONF;
+
 String readA2D(){
    JSONVar A2D ;
    A2D["value"] = (unsigned long) analogRead(A0);
@@ -36,4 +38,8 @@ String readHW(){
   String jsonString = JSON.stringify(HW);
 
   return jsonString;
+}
+
+void setNetworkSetting(){
+
 }

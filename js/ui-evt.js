@@ -20,17 +20,17 @@ $('#btnSaveNetSetting').click(function (e) {
    var isValidSecondaryDNS = isValidIP(netConfig.sd);
 
 
-   var isVAlidSSID = isVAlidSSIDName(netConfig.wn);
+   var isValidSSID = isValidSSIDName(netConfig.wn);
 
    if(!isIpValid || !isValidGateway || !isValidPrimaryDNS || !isValidSubnetMask || !isValidSecondaryDNS){
       $("#error_panel").css({'display' : 'block'});
       $('#error_panel').text(CS(lang).network_setting_error);
-      return;
+
    }
-   else if(!isVAlidSSID) {
+   else if(!isValidSSID) {
       $("#error_panel").css({'display' : 'block'});
       $('#error_panel').text(CS(lang).network_wifi_name);
-      return;
+
    }else{
       $("#error_panel").css({'display' : 'none'});
       sendNetworkSetting(netConfig).then((value) => {
@@ -50,12 +50,10 @@ $('#ipAddress').on("keypress", function(evt){
 
 
 function isValidIP(ipaddress) {  
-   if (/^(25[0-5]|2[0-4][0-9]|[1]?[1-9][1-9]?)\.(25[0-5]|2[0-4][0-9]|[1]?[1-9][1-9]?)\.(25[0-5]|2[0-4][0-9]|[1]?[1-9][1-9]?)\.(25[0-5]|2[0-4][0-9]|[1]?[1-9][1-9]?)$/.test(ipaddress)) {  
-     return (true)  
-   }   
-   return (false) 
+   return /^(25[0-5]|2[0-4][0-9]|[1]?[1-9][1-9]?)\.(25[0-5]|2[0-4][0-9]|[1]?[1-9][1-9]?)\.(25[0-5]|2[0-4][0-9]|[1]?[1-9][1-9]?)\.(25[0-5]|2[0-4][0-9]|[1]?[1-9][1-9]?)$/.test(ipaddress);
+
 } 
 
-function isVAlidSSIDName(ssidName){
+function isValidSSIDName(ssidName){
    return /^[!#;].|[+\[\]/"\t\s].*$/.test(ssidName);
 }

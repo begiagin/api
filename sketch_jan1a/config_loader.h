@@ -23,13 +23,13 @@ JSONVar readJsonString(SDClass SD, String configPath){
 }
 
 bool writeConfig(SDClass sd, JSONVar RAM_CONFIG, String configLocation){
-  String jsonToWrite = JSON.stringify(RAM_CONFIG);
+  
   File configFile = sd.open(configLocation + "config.json", FILE_WRITE);
   if(!configFile){
     Serial.println("Error in opening  for write config.json file");
     return false;
   }
-  configFile.println(jsonToWrite);
+  configFile.println(JSON.stringify(RAM_CONFIG));
   configFile.close();
   return true;
 }

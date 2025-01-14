@@ -18,12 +18,12 @@ function loadSetting(){
 // Alireza Salehi
 
 async function rbChangeWIFIMode() {
-   
-    var ipAddress = document.getElementById("ipAddress");
-    var gateway = document.getElementById("gateway");
-    var subnetMask = document.getElementById("subnetMask");
-    var primaryDNS = document.getElementById("primaryDNS");
-    var secondaryDNS = document.getElementById("secondaryDNS");
+
+    const ipAddress = document.getElementById("ipAddress");
+    const gateway = document.getElementById("gateway");
+    const subnetMask = document.getElementById("subnetMask");
+    const primaryDNS = document.getElementById("primaryDNS");
+    const secondaryDNS = document.getElementById("secondaryDNS");
 
     const wifiMode = document.getElementById("rbHotspot");
     //console.log(wifiMode.attributes);
@@ -51,27 +51,25 @@ async function rbChangeWIFIMode() {
 // Alireza Salehi 
  function makeWifiConfigJSON(){
 
-    var ip = document.getElementById("ipAddress").value;
-    var gateway = document.getElementById("gateway").value;
-    var subnetMask = document.getElementById("subnetMask").value;
-    var primaryDNS = document.getElementById("primaryDNS").value;
-    var secondaryDNS = document.getElementById("secondaryDNS").value;
+     const ip = document.getElementById("ipAddress").value;
+     const gateway = document.getElementById("gateway").value;
+     const subnetMask = document.getElementById("subnetMask").value;
+     const primaryDNS = document.getElementById("primaryDNS").value;
+     const secondaryDNS = document.getElementById("secondaryDNS").value;
+     const wifiMode = document.getElementById("rbHotspot")
+     const wifi_name = document.getElementById("wifi_name").value;
+     const wifiPass = document.getElementById("wifi_pass").value;
 
-    var wifi_name = document.getElementById("wifi_name").value;
-    var wifiPass = document.getElementById("wifi_pass").value;
-
-    const JSONConfig = {
-        ip : ip,
-        gw : gateway,
-        sm : subnetMask,
-        pd : primaryDNS,
-        sd : secondaryDNS,
-        wn : wifi_name,
-        wp : wifiPass
+     return{
+        mode : !!wifiMode.checked,
+        ip: ip,
+        gw: gateway,
+        sm: subnetMask,
+        pd: primaryDNS,
+        sd: secondaryDNS,
+        wn: wifi_name,
+        wp: wifiPass
     };
-   
-
-    return JSONConfig;
 
 }
 

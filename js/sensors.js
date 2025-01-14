@@ -4,7 +4,7 @@ const SUCCESS = 200;
     const startDateTime = Date.now();
 
     setTimeout(() => {
-        var xhttp = new XMLHttpRequest();
+        const xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function(){
             if(this.readyState === 4 && this.status === 200){
                 const respObject = JSON.parse(this.response);
@@ -17,15 +17,15 @@ const SUCCESS = 200;
 
 }
 
- function uploadFile() {  
-    var formData = new FormData();  
-    var fileField = document.getElementById("fileInput").files[0];  
-    var fileType = document.getElementById("lstFileType").value;
+ function uploadFile() {
+     const formData = new FormData();
+     const fileField = document.getElementById("fileInput").files[0];
+     const fileType = document.getElementById("lstFileType").value;
 
-    formData.append("file", fileField);  
-  
-    var xhr = new XMLHttpRequest();  
-    xhr.open("POST", "/upload?type="+fileType, true);  
+     formData.append("file", fileField);
+
+     const xhr = new XMLHttpRequest();
+     xhr.open("POST", "/upload?type="+fileType, true);
   
     xhr.onload = function() {  
       if (xhr.status === 200) {  
@@ -42,8 +42,8 @@ const SUCCESS = 200;
 
  function readConnectionStatus() {
     const startDateTime = Date.now();
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
+     const xhttp = new XMLHttpRequest();
+     xhttp.onreadystatechange = function() {
         if(this.readyState === 4 && this.status === 200){
             const respObject = JSON.parse(this.response);
             document.getElementById("wifi_addr").innerText = "آدرس IP : " + " " + respObject.ip_addr;
@@ -56,7 +56,7 @@ const SUCCESS = 200;
 
 function readHardwareInfo() {
     const startDateTime = Date.now();
-    var xhttp = new XMLHttpRequest();
+    const xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if(this.readyState === 4 && this.status === 200){
             const respObject = JSON.parse(this.response);
@@ -69,7 +69,7 @@ function readHardwareInfo() {
 
 function readSDInfo() {
     const startDateTime = Date.now();
-    var xhttp = new XMLHttpRequest();
+    const xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
         if(this.readyState === 4 && this.status === 200){
             const respObject = JSON.parse(this.response);
