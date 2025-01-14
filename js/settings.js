@@ -1,5 +1,4 @@
 
-
 // Load Config file from Local file Reside in OS File Structure 
 // Alireza Salehi
 
@@ -50,8 +49,7 @@ async function rbChangeWIFIMode() {
 
 // Collect All Wifi Required Information and Credentials and put it to JSON format 
 // Alireza Salehi 
-
-async function makeWifiConfigJSON(){
+ function makeWifiConfigJSON(){
 
     var ip = document.getElementById("ipAddress").value;
     var gateway = document.getElementById("gateway").value;
@@ -77,16 +75,4 @@ async function makeWifiConfigJSON(){
 
 }
 
-document.getElementById('ipAddress').addEventListener("keypress", function(evt){
-    //console.log(evt);
-    if ((evt.key < '0' || evt.key > '9') && evt.key !== '.') {
-        event.preventDefault()
-      }
-});
 
-function isValidIP(ipaddress) {  
-    if (/^(25[0-5]|2[0-4][0-9]|[1]?[1-9][1-9]?)\.(25[0-5]|2[0-4][0-9]|[1]?[1-9][1-9]?)\.(25[0-5]|2[0-4][0-9]|[1]?[1-9][1-9]?)\.(25[0-5]|2[0-4][0-9]|[1]?[1-9][1-9]?)$/.test(ipaddress)) {  
-      return (true)  
-    }   
-    return (false) 
-} 

@@ -9,7 +9,7 @@
 
     <title>Document</title>
   </head>
-  <body>
+  <body lang="fa">
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
       <div class="container-fluid">
         <a class="navbar-brand" href="#"
@@ -182,7 +182,16 @@
             <div class="row">
               <div>تنظیمات مربوط به آدرس IP</div>
             </div>
-
+            <!-- Alert Sectoion -->
+            <div class="row mt-1">
+              <div id="error_panel"
+                class="alert alert-dismissible alert-danger" style="display: none;">
+                
+                <strong>خطا</strong><br />
+                                ورودی های تنظیمات را بررسی کنید
+              </div>
+            </div>
+            <!-- End Alert Sectoion -->
             <div class="row">
               <form>
                 <div class="form-check form-switch mt-4">
@@ -196,7 +205,7 @@
                   </label>
                 </div>
                 <div class="row">
-                  <div class="form-group mt-2 col-7">
+                  <div class="form-group mt-2">
                     <input
                       type="text"
                       class="form-control"
@@ -206,30 +215,23 @@
                       placeholder="IP Address"
                     />
                   </div>
-                  <div class="form-group mt-2 col-5">
-                    <select class="form-select" id="lstFileType">
-                      <option value="24">24</option>
-                      <option value="16">16</option>
-                      <option value="8">8</option>
-                      <option value="4">4</option>
-                      <option value="2">2</option>
-                    </select>
-                  </div>
+
                 </div>
                 <div class="form-group mt-1">
                   <input
                     type="text"
                     class="form-control"
                     id="gateway"
-                    disabled
+                    
                     placeholder="Gateway"
-                  />                </div>
+                  />
+                </div>
                 <div class="form-group mt-1">
                   <input
                     type="text"
                     class="form-control"
                     id="subnetMask"
-                    disabled
+                    
                     placeholder="Subnet Mask"
                   />
                 </div>
@@ -238,7 +240,6 @@
                   <input
                     type="text"
                     class="form-control"
-                    
                     id="primaryDNS"
                     placeholder="Primary DNS"
                   />
@@ -276,8 +277,8 @@
             <div class="row mt-4">
               <div class="col-6">
                 <button
-                  onclick="makeWifiConfigJSON()"
                   type="button"
+                  id="btnSaveNetSetting"
                   class="btn btn-success"
                   style="width: 100%"
                 >
@@ -297,7 +298,6 @@
               </div>
             </div>
           </div>
-
         </div>
       </div>
     </div>
@@ -305,13 +305,9 @@
     <script src="./js/bootstrap.min.js"></script>
     <script src="./js/sensors.js"></script>
     <script src="./js/settings.js"></script>
-    <script>
-      $(document).ready(function () {
-        readA2D();
-        readConnectionStatus();
-        readHardwareInfo();
-        readSDInfo();
-      });
-    </script>
+    <script src="./js/const-def.js"></script>
+    <script src="./js/ui-evt.js"></script>
+    
+
   </body>
 </html>

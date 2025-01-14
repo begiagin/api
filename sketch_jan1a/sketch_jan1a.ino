@@ -5,14 +5,13 @@
 #include <Arduino_JSON.h>
 #include <FS.h>
 #include "dev_api.h"
-#include "config_loader.h"
 
-const char* ssid = "MobileAP";          // Replace with your Wi-Fi SSID
-const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
+const char* ssid = "Alireza Salehi";          // Replace with your Wi-Fi SSID
+const char* password = "1364123110";  // Replace with your Wi-Fi password
 
 enum FILE_TYPE {
   HTML = 0,
-  CSS, 
+  CSS, c:\Users\MTB\Desktop\api\sketch_jan1a\connection.h
   JS,
   JSON_FILE,
   CONFIG,
@@ -20,7 +19,6 @@ enum FILE_TYPE {
 } ;
 File currentUploadFile;
 String DIR_PATH[] = {"/", "/css/", "/js/", "/json/", "/config/", "/css/fonts/"};
-JSONVar PROG_CONF;
 
 ESP8266WebServer server(80);
 
@@ -36,9 +34,7 @@ void setup() {
   Serial.println("SD card initialized.");
 
   // Connect to Wi-Fi
-  
   WiFi.begin(ssid, password);
-  
   while (WiFi.status() != WL_CONNECTED) {
     delay(1000);
     Serial.println("Connecting to WiFi...");
@@ -46,11 +42,8 @@ void setup() {
   Serial.println("Connected to WiFi");
   Serial.println(WiFi.localIP());
 
-  // Read Configuration file 
-  PROG_CONF = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG]);
-  Serial.println(PROG_CONF["name"]);
-
-  // Initialize and Load all Required files to load WEB Dashboard  
+  // Initialize and Load all Required files to load WEB Dashboard
+  
   ManageRoutes("index.html", FILE_TYPE::HTML);
   ManageRoutes("css/bootstrap.rtl.css", FILE_TYPE::CSS);
   ManageRoutes("css/style.css", FILE_TYPE::CSS);
@@ -127,6 +120,7 @@ void handleFileUpload(){
 
   }
 }
+
 
 void ManageRoutes(String fileName, FILE_TYPE type){
   //Serial.println("/"+fileName);
