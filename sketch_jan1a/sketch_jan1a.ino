@@ -96,7 +96,7 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd) {
     "/change-net_config", HTTP_POST, [webServer]() {
       auto postResult = postJSON(webServer, "plain");
        if(postResult == POST_JSON_RESULT::SUCCESS){
-          Serial.println(postResult);
+          Serial.println(RAM_CONF["ip"]);
        }else{
         Serial.println(postResult);
        }

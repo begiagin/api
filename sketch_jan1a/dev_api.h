@@ -59,6 +59,8 @@ POST_JSON_RESULT postJSON(ESP8266WebServer* server, const String arg){
 
   JSONVar json = JSON.parse(server->arg(arg));
   RAM_CONF["ip"] = json["ip"];
-  
+
+  server->send(200, "application/json", POST_JSON_MESSAGES[(int)POST_JSON_RESULT::SUCCESS]); 
+
   return POST_JSON_RESULT::SUCCESS;
 }

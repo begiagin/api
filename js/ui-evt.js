@@ -27,11 +27,8 @@ $('#btnSaveNetSetting').click(function (e) {
       $('#error_panel').text(CS(lang).network_setting_error);
 
    }
-   else if(!isValidSSID) {
-      $("#error_panel").css({'display' : 'block'});
-      $('#error_panel').text(CS(lang).network_wifi_name);
 
-   }else{
+   else{
       $("#error_panel").css({'display' : 'none'});
       sendNetworkSetting(netConfig).then((value) => {
          console.log(value);
