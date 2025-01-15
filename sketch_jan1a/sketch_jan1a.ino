@@ -5,6 +5,7 @@
 #include <Arduino_JSON.h>
 #include <FS.h>
 #include "dev_api.h"
+#include "connection.h"
 
 // const char* ssid = "MobileAP";          // Replace with your Wi-Fi SSID
 // const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
@@ -99,7 +100,7 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd) {
     "/change-net_config", HTTP_POST, [webServer]() {
       auto postResult = postJSON(webServer, CONF_SECTION::NETWORK);
       if(postResult == POST_JSON_RESULT::SUCCESS){
-        Serial.println("Post Data Successful");
+         
       }
     });
 }

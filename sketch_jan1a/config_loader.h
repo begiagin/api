@@ -3,9 +3,10 @@
 
 JSONVar readJsonString(SDClass SD, String configPath){
   File jsonFile = SD.open(configPath + "config.json");  
-  JSONVar js = JSON.parse("\"{ }\"");
+  JSONVar js = JSON.parse("{}");
   if (!jsonFile) {  
     Serial.println("Error opening config.json");  
+    js
     return js;  
   }  
 
