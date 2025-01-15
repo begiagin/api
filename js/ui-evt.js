@@ -10,31 +10,26 @@ $(document).ready(function () {
    readSDInfo();
  });
 
-$('#btnSaveNetSetting').click(function (e) { 
+$('#btnSaveNetSetting').click(async function (e) {
 
    const netConfig = makeWifiConfigJSON();
-   var isIpValid = isValidIP(netConfig.ip);
-   var isValidPrimaryDNS = isValidIP(netConfig.pd);
-   var isValidGateway = isValidIP(netConfig.gw);
-   var isValidSubnetMask = isValidIP(netConfig.sm);
-   var isValidSecondaryDNS = isValidIP(netConfig.sd);
+   const isIpValid = isValidIP(netConfig.ip);
+   const isValidPrimaryDNS = isValidIP(netConfig.pd);
+   const isValidGateway = isValidIP(netConfig.gw);
+   const isValidSubnetMask = isValidIP(netConfig.sm);
+   const isValidSecondaryDNS = isValidIP(netConfig.sd);
 
 
-   var isValidSSID = isValidSSIDName(netConfig.wn);
+   const isValidSSID = isValidSSIDName(netConfig.wn);
 
-   if(!isIpValid || !isValidGateway || !isValidPrimaryDNS || !isValidSubnetMask || !isValidSecondaryDNS){
-      $("#error_panel").css({'display' : 'block'});
+   if (!isIpValid || !isValidGateway || !isValidPrimaryDNS || !isValidSubnetMask || !isValidSecondaryDNS) {
+      $("#error_panel").css({'display': 'block'});
       $('#error_panel').text(CS(lang).network_setting_error);
 
-   }
+   } else {
+      $("#error_panel").css({'display': 'none'});
+      sendNetworkSetting(netConfig, lang).then(r => {document.getElementById("btnCancelNetSetting").click();}).catch(error => {});
 
-   else{
-      $("#error_panel").css({'display' : 'none'});
-      sendNetworkSetting(netConfig).then((value) => {
-         console.log(value);
-      })
-
-      document.getElementById("btnSaveNetSetting").click();
    }
 });
 

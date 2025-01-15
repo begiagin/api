@@ -6,8 +6,11 @@
 #include <FS.h>
 #include "dev_api.h"
 
-const char* ssid = "MobileAP";  // Replace with your Wi-Fi SSID
-const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
+// const char* ssid = "MobileAP";          // Replace with your Wi-Fi SSID
+// const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
+
+const char* ssid = "DELTA";          // Replace with your Wi-Fi SSID
+const char* password = "Aa@1364123110";  // Replace with your Wi-Fi password
 
 enum FILE_TYPE {
   HTML = 0,
@@ -57,7 +60,7 @@ void setup() {
   ManageRoutes("js/const-def.js", FILE_TYPE::JS);
   ManageRoutes("js/ui-evt.js", FILE_TYPE::JS);
 
-  
+
   // Handle API Routes
   ManageAPI(WiFi, SD);
 
@@ -90,16 +93,14 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd) {
   });
 
 
-    ESP8266WebServer* webServer = &server;
+  ESP8266WebServer* webServer = &server;
 
-    server.on(
+  server.on(
     "/change-net_config", HTTP_POST, [webServer]() {
-      auto postResult = postJSON(webServer, "plain");
-       if(postResult == POST_JSON_RESULT::SUCCESS){
-          Serial.println(RAM_CONF["ip"]);
-       }else{
-        Serial.println(postResult);
-       }
+      auto postResult = postJSON(webServer, CONF_SECTION::NETWORK);
+      if(postResult == POST_JSON_RESULT::SUCCESS){
+        Serial.println("Post Data Successful");
+      }
     });
 }
 void loop() {
