@@ -1,9 +1,9 @@
 // in this file we should collect all information and function 
 // for gathering required data and send to ESP8266 Microcontroller
 
-async function sendNetworkSetting(netJson){
+ function sendNetworkSetting(netJson){
     $.ajax({                    
-        url: "/chang-net_config",
+        url: "/change-net_config",
         type: "POST",
         data: netJson,
         contentType: 'application/json',

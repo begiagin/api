@@ -6,8 +6,8 @@
 #include <FS.h>
 #include "dev_api.h"
 
-const char* ssid = "Alireza Salehi";  // Replace with your Wi-Fi SSID
-const char* password = "1364123110";  // Replace with your Wi-Fi password
+const char* ssid = "MobileAP";  // Replace with your Wi-Fi SSID
+const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
 
 enum FILE_TYPE {
   HTML = 0,
@@ -52,7 +52,12 @@ void setup() {
   ManageRoutes("js/JQuery.js", FILE_TYPE::JS);
   ManageRoutes("js/sensors.js", FILE_TYPE::JS);
   ManageRoutes("js/settings.js", FILE_TYPE::JS);
+  ManageRoutes("js/data-validator.js", FILE_TYPE::JS);
+  ManageRoutes("js/api.js", FILE_TYPE::JS);
+  ManageRoutes("js/const-def.js", FILE_TYPE::JS);
+  ManageRoutes("js/ui-evt.js", FILE_TYPE::JS);
 
+  
   // Handle API Routes
   ManageAPI(WiFi, SD);
 
@@ -84,13 +89,18 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd) {
     server.send(200, "application/json", getSDCardSize(sd));
   });
 
-  RAM_CONF["ip"] = "192.168.1.1";
+
+    ESP8266WebServer* webServer = &server;
 
     server.on(
-    "/set-config", HTTP_POST, []() {
-    server.send(200, "application/json", "\"{ \"response\" : \"OK \" \"}");
-    },
-    adjustRAMConfig);
+    "/change-net_config", HTTP_POST, [webServer]() {
+      auto postResult = postJSON(webServer, "plain");
+       if(postResult == POST_JSON_RESULT::SUCCESS){
+          Serial.println(postResult);
+       }else{
+        Serial.println(postResult);
+       }
+    });
 }
 void loop() {
   server.handleClient();
