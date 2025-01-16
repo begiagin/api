@@ -6,12 +6,13 @@
 #include <FS.h>
 #include "dev_api.h"
 #include "connection.h"
+#include "config_loader.h"
 
-// const char* ssid = "MobileAP";          // Replace with your Wi-Fi SSID
-// const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
+const char* ssid = "MobileAP";          // Replace with your Wi-Fi SSID
+const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
 
-const char* ssid = "DELTA";          // Replace with your Wi-Fi SSID
-const char* password = "Aa@1364123110";  // Replace with your Wi-Fi password
+// const char* ssid = "DELTA";          // Replace with your Wi-Fi SSID
+// const char* password = "Aa@1364123110";  // Replace with your Wi-Fi password
 
 enum FILE_TYPE {
   HTML = 0,
@@ -21,6 +22,8 @@ enum FILE_TYPE {
   CONFIG,
   FONT
 };
+
+
 File currentUploadFile;
 String DIR_PATH[] = { "/", "/css/", "/js/", "/json/", "/config/", "/css/fonts/" };
 
@@ -35,8 +38,12 @@ void setup() {
     Serial.println("SD card initialization failed!");
     return;
   }
-  Serial.println("SD card initialized.");
+  
 
+  // Check JSON Config file is Exist 
+
+  JSONVar cfg = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG]+"/config.json");
+  
   // Connect to Wi-Fi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {

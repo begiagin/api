@@ -80,6 +80,8 @@ POST_JSON_RESULT postJSON(ESP8266WebServer* server, CONF_SECTION section) {
         RAM_CONF["sd"] = (const char*)json["sd"];
         RAM_CONF["wn"] = (const char*)json["wn"];
         RAM_CONF["wp"] = (const char*)json["wp"];
+        RAM_CONF["mode"] = (bool)json["mode"];
+        RAM_CONF["dhcp"] = (bool)json["wp"];
       }
       break;
     case CONF_SECTION::MEMEORY:

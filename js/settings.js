@@ -49,28 +49,52 @@ async function rbChangeWIFIMode() {
 
 // Collect All Wifi Required Information and Credentials and put it to JSON format 
 // Alireza Salehi 
- function makeWifiConfigJSON(){
+ function makeWifiConfigJSON() {
 
      const ip = document.getElementById("ipAddress").value;
      const gateway = document.getElementById("gateway").value;
      const subnetMask = document.getElementById("subnetMask").value;
      const primaryDNS = document.getElementById("primaryDNS").value;
      const secondaryDNS = document.getElementById("secondaryDNS").value;
-     const wifiMode = document.getElementById("rbHotspot")
+     const wifiMode = document.getElementById("rbHotspot");
      const wifi_name = document.getElementById("wifi_name").value;
      const wifiPass = document.getElementById("wifi_pass").value;
+     const dhcpMode = document.getElementById("rbHotspot");
 
-     return{
-        mode : !!wifiMode.checked,
-        ip: ip,
-        gw: gateway,
-        sm: subnetMask,
-        pd: primaryDNS,
-        sd: secondaryDNS,
-        wn: wifi_name,
-        wp: wifiPass
-    };
+     return {
+         mode: !!wifiMode.checked,
+         dhcp: !!dhcpMode.checked,
+         ip: ip,
+         gw: gateway,
+         sm: subnetMask,
+         pd: primaryDNS,
+         sd: secondaryDNS,
+         wn: wifi_name,
+         wp: wifiPass
+     };
 
-}
+
+ }
+
+$('#rbDHCP').change(function() {
+    if ($(this).is(':checked')) {
+         $("#ipAddress").attr("disabled", "");
+         $("#subnetMask").attr("disabled", "");
+        $("#gateway").attr("disabled", "");
+        $("#primaryDNS").attr("disabled", "");
+        $("#secondaryDNS").attr("disabled", "");
+
+
+    } else {
+        $("#ipAddress").removeAttr("disabled");
+        $("#subnetMask").removeAttr("disabled");
+        $("#gateway").removeAttr("disabled");
+        $("#primaryDNS").removeAttr("disabled");
+        $("#secondaryDNS").removeAttr("disabled");
+
+    }
+});
+
+
 
 

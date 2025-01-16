@@ -1,12 +1,12 @@
 #include <SD.h>
 #include <FS.h>
 
-JSONVar readJsonString(SDClass SD, String configPath){
+JSONVar readJsonString(SDClass& SD, String configPath){
   File jsonFile = SD.open(configPath + "config.json");  
   JSONVar js = JSON.parse("{}");
   if (!jsonFile) {  
     Serial.println("Error opening config.json");  
-    js
+    
     return js;  
   }  
 
