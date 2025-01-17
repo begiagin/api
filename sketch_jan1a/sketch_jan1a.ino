@@ -51,27 +51,20 @@ void setup() {
 
     if (HOTSPOT_MODE) {
       if (DHCP_ENABLE) {
-        connectToNetwork(WiFi, NETWORK_MODE::HOTSPOT_DHCP, cfg);
+        connectToNetowrk(WiFi, NETWORK_MODE::HOTSPOT_DHCP, cfg);
       } else {
-        connectToNetwork(WiFi, NETWORK_MODE::HOTSPOT, cfg);
+        connectToNetowrk(WiFi, NETWORK_MODE::HOTSPOT, cfg);
       }
     } else {
       if (DHCP_ENABLE) {
-        connectToNetwork(WiFi, NETWORK_MODE::ACCESS_POINT_DHCP, cfg);
+        connectToNetowrk(WiFi, NETWORK_MODE::ACCESS_POINT_DHCP, cfg);
       } else {
-        connectToNetwork(WiFi, NETWORK_MODE::ACCESS_POINT, cfg);
+        connectToNetowrk(WiFi, NETWORK_MODE::ACCESS_POINT, cfg);
       }
     }
   }
 
-  // Connect to Wi-Fi
-  WiFi.begin(ssid, password);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi...");
-  }
-  Serial.println("Connected to WiFi");
-  Serial.println(WiFi.localIP());
+
 
   // Initialize and Load all Required files to load WEB Dashboard
 

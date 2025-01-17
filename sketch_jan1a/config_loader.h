@@ -1,7 +1,7 @@
 #include <SD.h>
 #include <FS.h>
 
-JSONVar readJsonString(SDClass& SD, String configPath, JSONVar& net_struct){
+JSONVar readJsonString(SDClass& SD, String configPath){
   File jsonFile = SD.open(configPath);  
   JSONVar js = JSON.parse("{}");
   if (!jsonFile) {  
