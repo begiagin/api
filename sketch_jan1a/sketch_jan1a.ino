@@ -8,11 +8,11 @@
 #include "connection.h"
 #include "config_loader.h"
 
-const char* ssid = "MobileAP";          // Replace with your Wi-Fi SSID
-const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
+// const char* ssid = "MobileAP";          // Replace with your Wi-Fi SSID
+// const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
 
-// const char* ssid = "DELTA";          // Replace with your Wi-Fi SSID
-// const char* password = "Aa@1364123110";  // Replace with your Wi-Fi password
+const char* ssid = "DELTA";              // Replace with your Wi-Fi SSID
+const char* password = "Aa@1364123110";  // Replace with your Wi-Fi password
 
 enum FILE_TYPE {
   HTML = 0,
@@ -33,17 +33,37 @@ ESP8266WebServer server(80);
 void setup() {
   Serial.begin(115200);
 
+
   // Initialize SD card
   if (!SD.begin(SS)) {
     Serial.println("SD card initialization failed!");
     return;
   }
-  
 
-  // Check JSON Config file is Exist 
 
-  JSONVar cfg = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG]+"/config.json");
-  
+  // Check JSON Config file is Exist
+
+  JSONVar cfg = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + "config.json");
+  if (cfg.length() > 0) {
+    // Get Network Mode
+    bool HOTSPOT_MODE = (bool)cfg["mode"];
+    bool DHCP_ENABLE = strlen((const char*)cfg["ip"]) > 0 ? true : false;
+
+    if (HOTSPOT_MODE) {
+      if (DHCP_ENABLE) {
+        connectToNetwork(WiFi, NETWORK_MODE::HOTSPOT_DHCP, cfg);
+      } else {
+        connectToNetwork(WiFi, NETWORK_MODE::HOTSPOT, cfg);
+      }
+    } else {
+      if (DHCP_ENABLE) {
+        connectToNetwork(WiFi, NETWORK_MODE::ACCESS_POINT_DHCP, cfg);
+      } else {
+        connectToNetwork(WiFi, NETWORK_MODE::ACCESS_POINT, cfg);
+      }
+    }
+  }
+
   // Connect to Wi-Fi
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
@@ -106,8 +126,7 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd) {
   server.on(
     "/change-net_config", HTTP_POST, [webServer]() {
       auto postResult = postJSON(webServer, CONF_SECTION::NETWORK);
-      if(postResult == POST_JSON_RESULT::SUCCESS){
-         
+      if (postResult == POST_JSON_RESULT::SUCCESS) {
       }
     });
 }

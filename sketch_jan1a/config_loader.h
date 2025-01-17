@@ -1,8 +1,8 @@
 #include <SD.h>
 #include <FS.h>
 
-JSONVar readJsonString(SDClass& SD, String configPath){
-  File jsonFile = SD.open(configPath + "config.json");  
+JSONVar readJsonString(SDClass& SD, String configPath, JSONVar& net_struct){
+  File jsonFile = SD.open(configPath);  
   JSONVar js = JSON.parse("{}");
   if (!jsonFile) {  
     Serial.println("Error opening config.json");  
@@ -16,6 +16,7 @@ JSONVar readJsonString(SDClass& SD, String configPath){
     json += jsonFile.readString();  
   }  
   jsonFile.close();   
+  Serial.println(json);
   js = JSON.parse(json);
 
 

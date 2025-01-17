@@ -1,6 +1,11 @@
 {
-    "name": "ESP8266",
-    "version": "1.0",
-    "status": "active",
-    "temperature": 25.5
-  }
+  "ip": "192.168.8.8",
+  "sm": "255.255.255.0",
+  "gw": "192.168.8.1",
+  "pd": "8.8.8.8",
+  "sd": "4.2.2.4",
+  "wn": "MobileAP",
+  "wp": "Aa1364123110",
+  "mode": false,
+  "dhcp": true
+}
