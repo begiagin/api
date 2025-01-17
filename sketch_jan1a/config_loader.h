@@ -1,26 +1,40 @@
 #include <SD.h>
 #include <FS.h>
+#include <ArduinoJson.h>
+
+#define BUFFER_SIZE 1024          
 
 JSONVar readJsonString(SDClass& SD, String configPath){
   File jsonFile = SD.open(configPath);  
-  JSONVar js = JSON.parse("{}");
+  JSONVar jsonObject ;
   if (!jsonFile) {  
     Serial.println("Error opening config.json");  
     
-    return js;  
+    return jsonObject;  
   }  
 
   // Read the file content into a string  
-  String json;  
+  String jsonString;  
   while (jsonFile.available()) {  
-    json += jsonFile.readString();  
+    jsonString += (char)jsonFile.read();  
   }  
+  //json = "{  \"ip\": \"192.168.0.59\", \"sm\": \"255.255.255.0\",  \"gw\": \"192.168.0.1\",  \"pd\": \"8.8.8.8\",  \"sd\": \"4.2.2.4\",  \"wn\": \"DELTA\",  \"wp\": \"Aa@1364123110\",  \"mode\": 0,  \"dhcp\": 0}";
   jsonFile.close();   
-  Serial.println(json);
-  js = JSON.parse(json);
+  Serial.println("");
+  Serial.println(jsonString);
+     // Create a StaticJsonDocument  
+    StaticJsonDocument<BUFFER_SIZE> jsonDoc;  
 
+    // Parse the JSON string  
+    DeserializationError error = deserializeJson(jsonDoc, jsonString);  
 
-  return js;
+  //jsonObject = JSON.parse(jsonString.c_str());
+  if(!error){
+    Serial.print("Mode = ");
+    String IpAddr = jsonDoc["ip"];
+    Serial.println(IpAddr);
+  }
+  return jsonObject;
 
 }
 

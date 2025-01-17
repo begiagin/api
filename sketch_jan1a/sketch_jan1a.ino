@@ -2,7 +2,7 @@
 #include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <SD.h>
-#include <Arduino_JSON.h>
+#include <ArduinoJson.h>
 #include <FS.h>
 #include "dev_api.h"
 #include "connection.h"
@@ -44,11 +44,12 @@ void setup() {
   // Check JSON Config file is Exist
 
   JSONVar cfg = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + "config.json");
-  if (cfg.length() > 0) {
+  if (cfg != null) {
     // Get Network Mode
-    bool HOTSPOT_MODE = (bool)cfg["mode"];
-    bool DHCP_ENABLE = strlen((const char*)cfg["ip"]) > 0 ? true : false;
-
+    auto HOTSPOT_MODE = ((int)cfg["mode"]) == 1 ? true : false;
+    auto DHCP_ENABLE = strlen((const char*)cfg["ip"]) > 0 ? true : false;
+    Serial.println(HOTSPOT_MODE);
+    Serial.println(DHCP_ENABLE);
     if (HOTSPOT_MODE) {
       if (DHCP_ENABLE) {
         connectToNetowrk(WiFi, NETWORK_MODE::HOTSPOT_DHCP, cfg);
