@@ -18,3 +18,18 @@
     });
 
 }
+
+async function getConfig(section){
+    $.ajax({  
+        url: '/get-config?section='+section, // Replace with your URL  
+        type: 'GET',  
+        dataType: 'json', // Expect a JSON response  
+        success: function(response) {  
+            console.log('Success:', response);  
+        },  
+        error: function(xhr, status, error) {  
+            console.error('Error:', error);  
+        }  
+    }); 
+
+}

@@ -28,7 +28,7 @@ File currentUploadFile;
 String DIR_PATH[] = { "/", "/css/", "/js/", "/json/", "/config/", "/css/fonts/" };
 
 ESP8266WebServer server(80);
-
+StaticJsonDocument<BUFFER_SIZE> RAM_CFG;
 
 void setup() {
   Serial.begin(115200);
@@ -43,24 +43,24 @@ void setup() {
 
   // Check JSON Config file is Exist
 
-  StaticJsonDocument<BUFFER_SIZE> cfg = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + "config.json");
-  if (cfg != null) {
+  RAM_CFG = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + "config.json");
+  if (RAM_CFG != null) {
     // Get Network Mode
-    auto HOTSPOT_MODE = ((int)cfg["mode"]) == 1 ? true : false;
-    auto DHCP_ENABLE = ((int)cfg["dhcp"]) == 1 ? true : false;
+    auto HOTSPOT_MODE = ((int)RAM_CFG["mode"]) == 1 ? true : false;
+    auto DHCP_ENABLE = ((int)RAM_CFG["dhcp"]) == 1 ? true : false;
     Serial.println(HOTSPOT_MODE);
     Serial.println(DHCP_ENABLE);
     if (HOTSPOT_MODE) {
       if (DHCP_ENABLE) {
-        connectToNetowrk(WiFi, NETWORK_MODE::HOTSPOT_DHCP, cfg);
+        connectToNetowrk(WiFi, NETWORK_MODE::HOTSPOT_DHCP, RAM_CFG);
       } else {
-        connectToNetowrk(WiFi, NETWORK_MODE::HOTSPOT, cfg);
+        connectToNetowrk(WiFi, NETWORK_MODE::HOTSPOT, RAM_CFG);
       }
     } else {
       if (DHCP_ENABLE) {
-        connectToNetowrk(WiFi, NETWORK_MODE::ACCESS_POINT_DHCP, cfg);
+        connectToNetowrk(WiFi, NETWORK_MODE::ACCESS_POINT_DHCP, RAM_CFG);
       } else {
-        connectToNetowrk(WiFi, NETWORK_MODE::ACCESS_POINT, cfg);
+        connectToNetowrk(WiFi, NETWORK_MODE::ACCESS_POINT, RAM_CFG);
       }
     }
   }
@@ -112,6 +112,12 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd) {
 
   server.on("/sd_info", [sd]() {
     server.send(200, "application/json", getSDCardSize(sd));
+  });
+
+  server.on("/get-config",[](){
+    String output;
+    serializeJson(RAM_CFG,output);
+    server.send(200,"application/json",output);
   });
 
 

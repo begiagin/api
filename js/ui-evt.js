@@ -8,6 +8,7 @@ $(document).ready(function () {
    readConnectionStatus();
    readHardwareInfo();
    readSDInfo();
+   getConfig('network');
  });
 
 $('#btnSaveNetSetting').click(async function (e) {
