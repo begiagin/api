@@ -68,28 +68,6 @@ POST_JSON_RESULT postJSON(ESP8266WebServer* server, CONF_SECTION section) {
   
   // Read JSON returned by Calling API from WEB
   JSONVar json = JSON.parse(server->arg(arg));
-  
-  switch (section) {
-    case CONF_SECTION::NETWORK:
-      if (json != null) {
-        RAM_CONF["ip"] = (const char*)json["ip"];
-        RAM_CONF["sm"] = (const char*)json["sm"];
-        RAM_CONF["gw"] = (const char*)json["gw"];
-        RAM_CONF["pd"] = (const char*)json["pd"];
-        RAM_CONF["sd"] = (const char*)json["sd"];
-        RAM_CONF["wn"] = (const char*)json["wn"];
-        RAM_CONF["wp"] = (const char*)json["wp"];
-        RAM_CONF["mode"] = (bool)json["mode"];
-        RAM_CONF["dhcp"] = (bool)json["wp"];
-      }
-      break;
-    case CONF_SECTION::MEMEORY:
-      break;
-    default:
-      break;
-  }
-
-
 
   server->send(200, "application/json", POST_JSON_MESSAGES[(int)POST_JSON_RESULT::SUCCESS]);
 

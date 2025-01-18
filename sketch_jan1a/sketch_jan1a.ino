@@ -28,11 +28,12 @@ File currentUploadFile;
 String DIR_PATH[] = { "/", "/css/", "/js/", "/json/", "/config/", "/css/fonts/" };
 
 ESP8266WebServer server(80);
-StaticJsonDocument<BUFFER_SIZE> RAM_CFG;
+
 
 void setup() {
   Serial.begin(115200);
 
+  StaticJsonDocument<BUFFER_SIZE> RAM_CFG;
 
   // Initialize SD card
   if (!SD.begin(SS)) {
@@ -42,8 +43,8 @@ void setup() {
 
 
   // Check JSON Config file is Exist
-
-  RAM_CFG = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + "config.json");
+  
+  RAM_CFG = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + "network_config.json");
   if (RAM_CFG != null) {
     // Get Network Mode
     auto HOTSPOT_MODE = ((int)RAM_CFG["mode"]) == 1 ? true : false;
@@ -84,14 +85,15 @@ void setup() {
 
 
   // Handle API Routes
-  ManageAPI(WiFi, SD);
+  ManageAPI(WiFi, SD, RAM_CFG);
 
   server.begin();
   Serial.println("HTTP server started");
 }
 
 
-void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd) {
+void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd, 
+               StaticJsonDocument<1024>& CFG) {
 
   server.on("/a2d", []() {
     server.send(200, "application/json", readA2D());
@@ -114,9 +116,9 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd) {
     server.send(200, "application/json", getSDCardSize(sd));
   });
 
-  server.on("/get-config",[](){
+  server.on("/get-config",[CFG](){
     String output;
-    serializeJson(RAM_CFG,output);
+    serializeJson(CFG,output);
     server.send(200,"application/json",output);
   });
 

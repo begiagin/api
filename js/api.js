@@ -8,23 +8,23 @@ async function sendNetworkSetting(netJson, lang) {
     data: netJson,
     contentType: "application/json",
     success: function (data) {
-      //alert(CS(lang).network_save_cfg_success);
+      alert(CS(lang).network_save_cfg_success);
       return true;
     },
     error: function (xhRequest, ErrorText, thrownError) {
-      alert(ErrorText);
+      alert(CS(lang).network_save_cfg_fail);
       return false;
     },
   });
 }
 
-async function getConfig(section) {
+function getConfig(section, fnToHandle) {
   $.ajax({
     url: "/get-config", // Replace with your URL
     type: "GET",
     dataType: "json", // Expect a JSON response
     success: function (response) {
-        return response;
+      fnToHandle(response);
     },
     error: function (xhr, status, error) {
       console.error("Error:", error);

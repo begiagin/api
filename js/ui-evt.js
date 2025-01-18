@@ -5,7 +5,9 @@ $(document).ready(function () {
   readConnectionStatus();
   readHardwareInfo();
   readSDInfo();
-  getConfig('network');
+  getConfig("network", function (data) {
+    setNetworkSetting(data);
+  });
 });
 
 $("#btnSaveNetSetting").click(async function (e) {
@@ -52,4 +54,33 @@ function isValidIP(ipaddress) {
 
 function isValidSSIDName(ssidName) {
   return /^[!#;].|[+\[\]/"\t\s].*$/.test(ssidName);
+}
+
+function setNetworkSetting(netConfig) {
+  $("#ipAddress").val(netConfig.ip);
+  $("#subnetMask").val(netConfig.sm);
+  $("#gateway").val(netConfig.gw);
+  $("#primaryDNS").val(netConfig.pd);
+  $("#secondaryDNS").val(netConfig.sd);
+
+  $("#wifi_name").val(netConfig.wn);
+  $("#wifi_pass").val(netConfig.wp);
+
+  if (netConfig.mode === 0) {
+    $("#rbHotspot").attr("checked", false);
+  } else {
+    $("#rbHotspot").attr("checked", true);
+  }
+
+  if (netConfig.dhcp === 0) {
+    $("#rbDHCP").attr("checked", false);
+  } else {
+    $("#rbDHCP").attr("checked", true);
+    $("#ipAddress").attr("disabled", "");
+    $("#subnetMask").attr("disabled", "");
+    $("#gateway").attr("disabled", "");
+    $("#primaryDNS").attr("disabled", "");
+    $("#secondaryDNS").attr("disabled", "");
+  }
+  //$("#rbDHCP").attr("checked", true).trigger("click");
 }
