@@ -40,7 +40,7 @@ StaticJsonDocument<BUFFER_SIZE> readJsonString(SDClass& SD, String configPath) {
 
 bool writeConfig(SDClass sd, JSONVar RAM_CONFIG, String configLocation) {
 
-  File configFile = sd.open(configLocation + "config.json", FILE_WRITE);
+  File configFile = sd.open(configLocation , FILE_WRITE);
   if (!configFile) {
     Serial.println("Error in opening  for write config.json file");
     return false;

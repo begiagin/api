@@ -59,7 +59,7 @@ String readHW() {
   return jsonString;
 }
 
-POST_JSON_RESULT postJSON(ESP8266WebServer* server, CONF_SECTION section) {
+POST_JSON_RESULT postJSON(ESP8266WebServer* server, CONF_SECTION section, SDClass& SD) {
   String arg = "plain";
   if (server->hasArg(arg) == false) {  // Check if there is data in the request
     server->send(200, "application/json", POST_JSON_MESSAGES[(int)POST_JSON_RESULT::BAD_STRUCTURE]);
@@ -69,6 +69,14 @@ POST_JSON_RESULT postJSON(ESP8266WebServer* server, CONF_SECTION section) {
   // Read JSON returned by Calling API from WEB
   JSONVar json = JSON.parse(server->arg(arg));
 
+  switch (section) {
+    case CONF_SECTION::NETWORK :
+      break;
+    case CONF_SECTION::PROG :
+      break;   
+    case CONF_SECTION::SD_CARD :  
+      break; 
+  }
   server->send(200, "application/json", POST_JSON_MESSAGES[(int)POST_JSON_RESULT::SUCCESS]);
 
   return POST_JSON_RESULT::SUCCESS;

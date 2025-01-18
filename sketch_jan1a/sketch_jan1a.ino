@@ -127,7 +127,7 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd,
 
   server.on(
     "/change-net_config", HTTP_POST, [webServer]() {
-      auto postResult = postJSON(webServer, CONF_SECTION::NETWORK);
+      auto postResult = postJSON(webServer, CONF_SECTION::NETWORK, SD);
       if (postResult == POST_JSON_RESULT::SUCCESS) {
       }
     });
