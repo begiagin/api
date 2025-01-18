@@ -54,7 +54,8 @@ POST_JSON_RESULT postJSON(ESP8266WebServer* server, CONF_SECTION section, SDClas
 
   switch (section) {
     case CONF_SECTION::NETWORK :
-      writeConfig(Sd, json, DIR_PATH[FILE_TYPE::CONFIG]);
+      //writeConfig(Sd, json, DIR_PATH[FILE_TYPE::CONFIG]);
+      Serial.println((const char *)json["sn"]);
       break;
     case CONF_SECTION::PROG :
       break;   

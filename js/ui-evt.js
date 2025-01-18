@@ -12,6 +12,13 @@ $(document).ready(function () {
 
 $("#btnSaveNetSetting").click(async function (e) {
   const netConfig = makeWifiConfigJSON();
+  sendNetworkSetting(netConfig, lang)
+    .then((r) => {
+      document.getElementById("btnCancelNetSetting").click();
+    })
+    .catch((error) => {});
+  /*
+  
   const isIpValid = isValidIP(netConfig.ip);
   const isValidPrimaryDNS = isValidIP(netConfig.pd);
   const isValidGateway = isValidIP(netConfig.gw);
@@ -37,6 +44,7 @@ $("#btnSaveNetSetting").click(async function (e) {
       })
       .catch((error) => {});
   }
+      */
 });
 
 $("#ipAddress").on("keypress", function (evt) {

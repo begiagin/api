@@ -60,6 +60,7 @@ enum FILE_TYPE {
   CONFIG,
   FONT
 };
+
 #endif // DEFINE_MAIN_VARIABLES_H
 
 bool writeConfig(SDClass sd, JSONVar RAM_CONFIG, String configLocation);
