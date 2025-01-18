@@ -1,11 +1,7 @@
 #include <SD.h>
 #include <FS.h>
 #include <ArduinoJson.h>
-
-#ifndef BUFFER_SIZE
-#define BUFFER_SIZE 1024
-#endif
-
+#include "def.h"
 
 StaticJsonDocument<BUFFER_SIZE> readJsonString(SDClass& SD, String configPath) {
   File jsonFile = SD.open(configPath);

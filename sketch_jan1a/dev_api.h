@@ -1,28 +1,11 @@
 #include "WString.h"
-
+#include "def.h"
 #include <Arduino_JSON.h>
 #include <SD.h>
 
 JSONVar RAM_CONF;
-enum POST_JSON_RESULT {
-  SUCCESS = 0,
-  NOT_OK,
-  BAD_STRUCTURE
-};
 
-enum CONF_SECTION {
-  NETWORK = 0,
-  SD_CARD,
-  MEMEORY,
-  BEHAVIOR,
-  PROG
-};
 
-String POST_JSON_MESSAGES[] = {
-  "{ \"data\": \"SUCCESS\" }",
-  "{ \"data\": \"FAIL\" }",
-  "{ \"data\": \"BAD_ARG\" }"
-};
 
 
 String readA2D() {
@@ -59,7 +42,7 @@ String readHW() {
   return jsonString;
 }
 
-POST_JSON_RESULT postJSON(ESP8266WebServer* server, CONF_SECTION section, SDClass& SD) {
+POST_JSON_RESULT postJSON(ESP8266WebServer* server, CONF_SECTION section, SDClass& Sd) {
   String arg = "plain";
   if (server->hasArg(arg) == false) {  // Check if there is data in the request
     server->send(200, "application/json", POST_JSON_MESSAGES[(int)POST_JSON_RESULT::BAD_STRUCTURE]);
@@ -71,6 +54,7 @@ POST_JSON_RESULT postJSON(ESP8266WebServer* server, CONF_SECTION section, SDClas
 
   switch (section) {
     case CONF_SECTION::NETWORK :
+      writeConfig(Sd, json, DIR_PATH[FILE_TYPE::CONFIG]);
       break;
     case CONF_SECTION::PROG :
       break;   

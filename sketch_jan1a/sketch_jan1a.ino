@@ -7,25 +7,10 @@
 #include "dev_api.h"
 #include "connection.h"
 #include "config_loader.h"
-
-// const char* ssid = "MobileAP";          // Replace with your Wi-Fi SSID
-// const char* password = "Aa1364123110";  // Replace with your Wi-Fi password
-
-const char* ssid = "DELTA";              // Replace with your Wi-Fi SSID
-const char* password = "Aa@1364123110";  // Replace with your Wi-Fi password
-
-enum FILE_TYPE {
-  HTML = 0,
-  CSS,
-  JS,
-  JSON_FILE,
-  CONFIG,
-  FONT
-};
+#include "def.h"
 
 
 File currentUploadFile;
-String DIR_PATH[] = { "/", "/css/", "/js/", "/json/", "/config/", "/css/fonts/" };
 
 ESP8266WebServer server(80);
 
