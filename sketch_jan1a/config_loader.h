@@ -20,6 +20,9 @@ StaticJsonDocument<BUFFER_SIZE> readJsonString(SDClass& SD, String configPath) {
     jsonString += (char)jsonFile.read();
   }
   jsonFile.close();
+  Serial.println("-------------");
+  Serial.println(jsonString);
+  Serial.println("-------------");
 
   // Parse the JSON string
   DeserializationError error = deserializeJson(jsonDoc, jsonString);

@@ -106,6 +106,7 @@ void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode, StaticJsonDocum
     delay(1000);
     Serial.println("Connecting to WiFi...");
   }
-  Serial.println("Connected to WiFi");
-  //Serial.println(wifi.localIP());
+
+  Serial.println("Connected to WiFi . Network Mode : " + NetworkMode);
+  Serial.println(wifi.localIP());
 }

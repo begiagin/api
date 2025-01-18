@@ -47,7 +47,7 @@ void setup() {
   if (cfg != null) {
     // Get Network Mode
     auto HOTSPOT_MODE = ((int)cfg["mode"]) == 1 ? true : false;
-    auto DHCP_ENABLE = strlen((const char*)cfg["ip"]) > 0 ? true : false;
+    auto DHCP_ENABLE = ((int)cfg["dhcp"]) == 1 ? true : false;
     Serial.println(HOTSPOT_MODE);
     Serial.println(DHCP_ENABLE);
     if (HOTSPOT_MODE) {
