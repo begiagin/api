@@ -43,7 +43,7 @@ void setup() {
 
   // Check JSON Config file is Exist
 
-  JSONVar cfg = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + "config.json");
+  StaticJsonDocument<BUFFER_SIZE> cfg = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + "config.json");
   if (cfg != null) {
     // Get Network Mode
     auto HOTSPOT_MODE = ((int)cfg["mode"]) == 1 ? true : false;
