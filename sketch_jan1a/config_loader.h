@@ -5,7 +5,7 @@
 
 StaticJsonDocument<BUFFER_SIZE> readJsonString(SDClass& SD, String configPath) {
   File jsonFile = SD.open(configPath);
-
+  Serial.println(configPath);
   StaticJsonDocument<BUFFER_SIZE> jsonDoc;
   if (!jsonFile) {
     Serial.println("Error opening config.json");
@@ -19,9 +19,7 @@ StaticJsonDocument<BUFFER_SIZE> readJsonString(SDClass& SD, String configPath) {
     jsonString += (char)jsonFile.read();
   }
   jsonFile.close();
-  Serial.println("-------------");
-  Serial.println(jsonString);
-  Serial.println("-------------");
+
 
   // Parse the JSON string
   DeserializationError error = deserializeJson(jsonDoc, jsonString);
@@ -34,14 +32,21 @@ StaticJsonDocument<BUFFER_SIZE> readJsonString(SDClass& SD, String configPath) {
   return jsonDoc;
 }
 
-bool writeConfig(SDClass sd, JSONVar RAM_CONFIG, String configLocation) {
+bool writeConfig(SDClass sd, StaticJsonDocument<BUFFER_SIZE> CONFIG_SEC, String configLocation) {
 
-  File configFile = sd.open(configLocation , FILE_WRITE);
+  if (sd.exists(configLocation)) {
+    sd.remove(configLocation);
+  }
+  File configFile = sd.open(configLocation, FILE_WRITE);
+
   if (!configFile) {
     Serial.println("Error in opening  for write config.json file");
     return false;
   }
-  configFile.println(JSON.stringify(RAM_CONFIG));
+  String jsonStrinContent = "";
+  serializeJson(CONFIG_SEC, jsonStrinContent);
+  Serial.println("Set Config with : " + jsonStrinContent);
+  configFile.println(jsonStrinContent);
   configFile.close();
   return true;
 }

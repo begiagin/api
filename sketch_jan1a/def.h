@@ -1,4 +1,5 @@
 #include <Arduino_JSON.h>
+#include <ArduinoJson.h>
 #ifndef BUFFER_SIZE
 #define BUFFER_SIZE 1024
 #endif
@@ -60,10 +61,20 @@ enum FILE_TYPE {
   CONFIG,
   FONT
 };
+String CONFIG_FILE_NAMES[] = {
+  "network_config.json", 
+  "sd_card.json", 
+  "memory.json",
+  "behavior.json",
+  "prog.json"
+};
+//String NETOWRK_JSON_KEYS = {"mode","dhcp","ip","gw","sm","pd","sd","wn","wp"};
 
 #endif // DEFINE_MAIN_VARIABLES_H
 
-bool writeConfig(SDClass sd, JSONVar RAM_CONFIG, String configLocation);
+bool writeConfig(SDClass sd, StaticJsonDocument<BUFFER_SIZE> RAM_CONFIG, String configLocation);
+
+
 
 
 

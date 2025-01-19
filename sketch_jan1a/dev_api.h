@@ -1,6 +1,7 @@
 #include "WString.h"
 #include "def.h"
 #include <Arduino_JSON.h>
+#include <ArduinoJson.h>
 #include <SD.h>
 
 JSONVar RAM_CONF;
@@ -50,12 +51,15 @@ POST_JSON_RESULT postJSON(ESP8266WebServer* server, CONF_SECTION section, SDClas
   }
   
   // Read JSON returned by Calling API from WEB
-  JSONVar json = JSON.parse(server->arg(arg));
-
+  StaticJsonDocument<BUFFER_SIZE> json;
+  DeserializationError error = deserializeJson(json, server->arg(arg));
+  if(error){
+    Serial.println("JSON Parse Error");  
+  }
   switch (section) {
     case CONF_SECTION::NETWORK :
-      //writeConfig(Sd, json, DIR_PATH[FILE_TYPE::CONFIG]);
-      Serial.println((const char *)json["sn"]);
+      writeConfig(Sd, json, DIR_PATH[FILE_TYPE::CONFIG]+
+                            CONFIG_FILE_NAMES[CONF_SECTION::NETWORK]);
       break;
     case CONF_SECTION::PROG :
       break;   

@@ -29,7 +29,8 @@ void setup() {
 
   // Check JSON Config file is Exist
   
-  RAM_CFG = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + "network_config.json");
+  RAM_CFG = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + 
+                               CONFIG_FILE_NAMES[CONF_SECTION::NETWORK]);
   if (RAM_CFG != null) {
     // Get Network Mode
     auto HOTSPOT_MODE = ((int)RAM_CFG["mode"]) == 1 ? true : false;
@@ -101,10 +102,16 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd,
     server.send(200, "application/json", getSDCardSize(sd));
   });
 
-  server.on("/get-config",[CFG](){
+  server.on("/get-net-config",[CFG](){
     String output;
-    serializeJson(CFG,output);
+    auto net_setting = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + 
+                               CONFIG_FILE_NAMES[CONF_SECTION::NETWORK]);
+                               
+    serializeJson(net_setting ,output);
+    Serial.println("Get Config with : " + output);
     server.send(200,"application/json",output);
+    delay(1000);
+
   });
 
 
@@ -112,8 +119,10 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd,
 
   server.on(
     "/change-net_config", HTTP_POST, [webServer]() {
+      
       auto postResult = postJSON(webServer, CONF_SECTION::NETWORK, SD);
       if (postResult == POST_JSON_RESULT::SUCCESS) {
+
       }
     });
 }

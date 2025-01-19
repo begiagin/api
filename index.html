@@ -184,40 +184,57 @@
             </div>
             <!-- Alert Sectoion -->
             <div class="row mt-1">
-              <div id="error_panel"
-                class="alert alert-dismissible alert-danger" style="display: none;">
-                
+              <div
+                id="error_panel"
+                class="alert alert-dismissible alert-danger"
+                style="display: none"
+              >
                 <strong>خطا</strong><br />
-                                ورودی های تنظیمات را بررسی کنید
+                ورودی های تنظیمات را بررسی کنید
               </div>
             </div>
             <!-- End Alert Sectoion -->
             <div class="row">
               <form>
-
-
-                <div class="row mt-4">
-                  <div class="col-6">
+                <div class="row mt-2">
+                  <div class="form-check mb-2">
+                    <input
+                      class="form-check-input"
+                      type="checkbox"
+                      value=""
+                      id="cbRestart"
+                      checked=""
+                    />
+                    <label class="form-check-label" for="flexCheckChecked">
+                      راه اندازی مجدد دستگاه
+                    </label>
+                  </div>
+                  <div class="col-6 mt-2">
                     <div class="form-check form-switch">
                       <input
-                              class="form-check-input"
-                              type="checkbox"
-                              id="rbHotspot"
+                        class="form-check-input"
+                        type="checkbox"
+                        id="rbHotspot"
                       />
-                      <label class="form-check-label" for="flexSwitchCheckChecked"
-                      >  حالت Hotstpot
+                      <label
+                        class="form-check-label"
+                        for="flexSwitchCheckChecked"
+                      >
+                        حالت Hotstpot
                       </label>
                     </div>
                   </div>
                   <div class="col-6">
                     <div class="form-check form-switch">
                       <input
-                              class="form-check-input"
-                              type="checkbox"
-                              id="rbDHCP"
+                        class="form-check-input"
+                        type="checkbox"
+                        id="rbDHCP"
                       />
-                      <label class="form-check-label" for="flexSwitchCheckChecked"
-                      >DHCP
+                      <label
+                        class="form-check-label"
+                        for="flexSwitchCheckChecked"
+                        >DHCP
                       </label>
                     </div>
                   </div>
@@ -234,14 +251,12 @@
                       placeholder="IP Address"
                     />
                   </div>
-
                 </div>
                 <div class="form-group mt-1">
                   <input
                     type="text"
                     class="form-control"
                     id="gateway"
-                    
                     placeholder="Gateway"
                   />
                 </div>
@@ -250,7 +265,6 @@
                     type="text"
                     class="form-control"
                     id="subnetMask"
-                    
                     placeholder="Subnet Mask"
                   />
                 </div>
@@ -328,7 +342,5 @@
     <script src="./js/const-def.js"></script>
     <script src="./js/ui-evt.js"></script>
     <script src="./js/api.js"></script>
-    
-
   </body>
 </html>

@@ -5,7 +5,7 @@ async function sendNetworkSetting(netJson, lang) {
   $.ajax({
     url: "/change-net_config",
     type: "POST",
-    data: netJson,
+    data: JSON.stringify(netJson),
     contentType: "application/json",
     success: function (data) {
       alert(CS(lang).network_save_cfg_success);
@@ -18,9 +18,9 @@ async function sendNetworkSetting(netJson, lang) {
   });
 }
 
-function getConfig(section, fnToHandle) {
+function getNetworkConfig(section, fnToHandle) {
   $.ajax({
-    url: "/get-config", // Replace with your URL
+    url: "/get-net-config", // Replace with your URL
     type: "GET",
     dataType: "json", // Expect a JSON response
     success: function (response) {

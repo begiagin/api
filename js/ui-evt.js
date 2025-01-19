@@ -5,13 +5,19 @@ $(document).ready(function () {
   readConnectionStatus();
   readHardwareInfo();
   readSDInfo();
-  getConfig("network", function (data) {
+  getNetworkConfig("network", function (data) {
+    console.log(data);
     setNetworkSetting(data);
   });
 });
 
 $("#btnSaveNetSetting").click(async function (e) {
+  const restartMicro = $("#cbRestart").is(":checked");
+
   const netConfig = makeWifiConfigJSON();
+  netConfig.resetFlag = restartMicro;
+
+  console.log(netConfig);
   sendNetworkSetting(netConfig, lang)
     .then((r) => {
       document.getElementById("btnCancelNetSetting").click();
@@ -65,6 +71,7 @@ function isValidSSIDName(ssidName) {
 }
 
 function setNetworkSetting(netConfig) {
+  console.log(netConfig);
   $("#ipAddress").val(netConfig.ip);
   $("#subnetMask").val(netConfig.sm);
   $("#gateway").val(netConfig.gw);
@@ -74,16 +81,17 @@ function setNetworkSetting(netConfig) {
   $("#wifi_name").val(netConfig.wn);
   $("#wifi_pass").val(netConfig.wp);
 
-  if (netConfig.mode === 0) {
+  if (netConfig.mode === 0 || netConfig.mode === false) {
     $("#rbHotspot").attr("checked", false);
   } else {
     $("#rbHotspot").attr("checked", true);
   }
 
-  if (netConfig.dhcp === 0) {
+  if (netConfig.dhcp === 0 || netConfig.dhcp === false) {
     $("#rbDHCP").attr("checked", false);
   } else {
     $("#rbDHCP").attr("checked", true);
+
     $("#ipAddress").attr("disabled", "");
     $("#subnetMask").attr("disabled", "");
     $("#gateway").attr("disabled", "");

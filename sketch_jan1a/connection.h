@@ -6,7 +6,7 @@
 
 
 
-void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode, 
+void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode,
                       StaticJsonDocument<BUFFER_SIZE>& cfg) {
 
   // Connect to Wi-Fi
@@ -31,13 +31,13 @@ void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode,
 
   switch (mode) {
     case NETWORK_MODE::HOTSPOT_DHCP:
-      NetworkMode = "HOTSPT WITH DHCP ADDRESSING ";    
-      
-      if (strlen(CONFIG_SSID) > 0) {
-        wifi.softAP(CONFIG_SSID, CONFIG_WIFI_PASS);
-      } else {
-        wifi.softAP(ssid_ap, password_ap);
-      }    
+      NetworkMode = "HOTSPT WITH DHCP ADDRESSING ";
+      wifi.softAP(ssid_ap, password_ap);
+      ip.fromString("192.168.8.8");
+      gateway.fromString("192.168.8.1");
+      subnetMask.fromString("255.255.255.0");
+      wifi.softAPConfig(ip, gateway, subnetMask);
+      Serial.println(wifi.softAPIP());
       break;
     case NETWORK_MODE::HOTSPOT:
 
@@ -48,9 +48,9 @@ void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode,
       secondaryDNS.fromString(SECONDARY_DNS);
 
       wifi.softAPConfig(ip, gateway, subnetMask);
-      
-      NetworkMode = "HOTSPOT WITH STATIC IP ADDRESSING ";    
-      
+
+      NetworkMode = "HOTSPOT WITH STATIC IP ADDRESSING ";
+
       if (strlen(CONFIG_SSID) > 0) {
         wifi.softAP(CONFIG_SSID, CONFIG_WIFI_PASS);
       } else {
@@ -66,7 +66,11 @@ void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode,
         wifi.begin(ssid_ap, password_ap);
       }
       NetworkMode = "ACCESS POINT WITH DHCP";
-
+      while (wifi.status() != WL_CONNECTED) {
+        delay(1000);
+        Serial.println("Connecting to WiFi...");
+      }
+      Serial.println(wifi.localIP());
       break;
     case NETWORK_MODE::ACCESS_POINT:
 
@@ -78,7 +82,7 @@ void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode,
       secondaryDNS.fromString(SECONDARY_DNS);
 
       wifi.config(ip, gateway, subnetMask, primaryDNS, secondaryDNS);
- 
+
       if (strlen(CONFIG_SSID) > 0) {
         wifi.begin(CONFIG_SSID, CONFIG_WIFI_PASS);
       } else {
@@ -86,14 +90,14 @@ void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode,
       }
 
       NetworkMode = "ACCESS POINT WITH STATIC IP ADDRESS";
+      while (wifi.status() != WL_CONNECTED) {
+        delay(1000);
+        Serial.println("Connecting to WiFi...");
+      }
+      Serial.println(wifi.localIP());
       break;
   }
 
-  while (wifi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.println("Connecting to WiFi...");
-  }
 
   Serial.println("Connected to WiFi . Network Mode : " + NetworkMode);
-  Serial.println(wifi.localIP());
 }
