@@ -70,3 +70,18 @@ POST_JSON_RESULT postJSON(ESP8266WebServer* server, CONF_SECTION section, SDClas
 
   return POST_JSON_RESULT::SUCCESS;
 }
+
+USER getUserByUserName(String& userName, String& password){
+
+
+  // TODO Implement User found from User Database
+  USER usr;
+  if(userName == "admin" && password == "admin"){
+    usr.userName = userName;
+    usr.isLoggedIn = true;
+    usr.lastLogin = "now";
+    usr.sessionId = createUinqueSessionId(userName);
+  } 
+
+  return usr;
+}

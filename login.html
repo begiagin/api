@@ -1,0 +1,131 @@
+<html lang="fa" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./css/bootstrap.rtl.css" rel="stylesheet" />
+    <link rel="stylesheet" href="./css/style.css" />
+    <script src="./js/JQuery.js"></script>
+    <script>
+      $(document).ready(function () {
+        setTimeout(() => {
+          $("div:hidden").first().fadeIn(800);
+          document.getElementById("spinner").style.display = "none";
+          document.getElementById("loginPanel").style.display = "";
+        }, 2000);
+        $("#btnLogin").click(function () {
+          const UserName = $("#userName").val();
+          const Password = $("#password").val();
+          const obj = {
+            usr: UserName,
+            pass: Password,
+          };
+          $.ajax({
+            url: "/change-net_config",
+            type: "POST",
+            data: JSON.stringify(netJson),
+            contentType: "application/json",
+            success: function (data) {
+              alert(CS(lang).network_save_cfg_success);
+              return true;
+            },
+            error: function (xhRequest, ErrorText, thrownError) {
+              alert(CS(lang).network_save_cfg_fail);
+              return false;
+            },
+          });
+        });
+      });
+    </script>
+    <style>
+      .gradient-custom {
+        /* fallback for old browsers */
+        background: #6a11cb;
+
+        /* Chrome 10-25, Safari 5.1-6 */
+        background: -webkit-linear-gradient(
+          to right,
+          rgba(106, 17, 203, 1),
+          rgba(37, 117, 252, 1)
+        );
+
+        /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+        background: linear-gradient(
+          to right,
+          rgba(106, 17, 203, 1),
+          rgba(37, 117, 252, 1)
+        );
+      }
+    </style>
+    <title>Document</title>
+  </head>
+  <body lang="fa" dir="rtl">
+    <section class="vh-100 gradient-custom">
+      <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="spinner-grow text-secondary" id="spinner" role="status">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+          <div
+            class="col-12 col-md-8 col-lg-6 col-xl-5"
+            id="loginPanel"
+            style="display: none"
+          >
+            <div class="card bg-dark text-white" style="border-radius: 1rem">
+              <div class="card-body p-5 text-center">
+                <div class="mb-md-5 mt-md-4 pb-5">
+                  <h2 class="mb-2">
+                    ورود به <b class="text-success">پولادنگار</b>
+                  </h2>
+                  <p class="text-white-50 mb-5 mt-4 w-100">
+                    نام کاربری و کلمه عبور را وارد نمائید
+                  </p>
+
+                  <div data-mdb-input-init class="form-outline form-white mb-4">
+                    <input
+                      type="email"
+                      style="direction: rtl"
+                      placeholder="نام کاربری"
+                      id="userName"
+                      class="form-control form-control-lg"
+                    />
+                  </div>
+
+                  <div data-mdb-input-init class="form-outline form-white mb-4">
+                    <input
+                      type="password"
+                      placeholder="کلمه عبور"
+                      id="password"
+                      class="form-control form-control-lg"
+                    />
+                  </div>
+
+                  <button
+                    data-mdb-button-init
+                    data-mdb-ripple-init
+                    class="btn btn-outline-light btn-lg px-5 mt-3"
+                    type="submit"
+                  >
+                    ورود
+                  </button>
+                  <!-- Alert Sectoion -->
+                  <div class="row mt-3">
+                    <div
+                      id="error_panel"
+                      class="alert alert-dismissible alert-danger"
+                      style="display: none"
+                    >
+                      <strong>خطا</strong><br />
+                      ورودی های تنظیمات را بررسی کنید
+                    </div>
+                  </div>
+                  <!-- End Alert Sectoion -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="./js/bootstrap.min.js "></script>
+  </body>
+</html>

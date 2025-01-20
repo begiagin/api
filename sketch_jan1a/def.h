@@ -1,3 +1,5 @@
+#include "esp8266_peri.h"
+#include <sys/types.h>
 #include <Arduino_JSON.h>
 #include <ArduinoJson.h>
 #ifndef BUFFER_SIZE
@@ -10,7 +12,8 @@
 enum POST_JSON_RESULT {
   SUCCESS = 0,
   NOT_OK,
-  BAD_STRUCTURE
+  BAD_STRUCTURE,
+  DATA_NOT_FOUND
 };
 
 #endif // POST_RESULT_H
@@ -43,7 +46,8 @@ enum NETWORK_MODE {
 String POST_JSON_MESSAGES[] = {
   "{ \"data\": \"SUCCESS\" }",
   "{ \"data\": \"FAIL\" }",
-  "{ \"data\": \"BAD_ARG\" }"
+  "{ \"data\": \"BAD_ARG\" }",
+  "{ \"data\": \"DATA_NOT_FOUND\" }"
 };
 String DIR_PATH[] = { "/", "/css/", "/js/", "/json/", "/config/", "/css/fonts/" };
 
@@ -61,6 +65,19 @@ enum FILE_TYPE {
   CONFIG,
   FONT
 };
+
+struct USER{
+  
+  String userName;
+  String lastLogin;
+  String sessionId;
+  bool isLoggedIn;
+};
+
+USER getUserByUserName(String& USER_NAME, String& PASSWORD);
+String createUinqueSessionId(String& USERNAME);
+
+String OBTAINED_DEV_IP;
 String CONFIG_FILE_NAMES[] = {
   "network_config.json", 
   "sd_card.json", 

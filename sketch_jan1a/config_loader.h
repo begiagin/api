@@ -29,7 +29,15 @@ StaticJsonDocument<BUFFER_SIZE> readJsonString(SDClass& SD, String configPath) {
     String IpAddr = jsonDoc["ip"];
     Serial.println(IpAddr);
   }
+  
   return jsonDoc;
+}
+
+String createUinqueSessionId(String& USERNAME){
+  String preparedUniqKey = String(random(564148697410L));
+  String millisPartOne = String(millis()).substring(0,3);
+  String millisPartTwo = String(millis()).substring(2,4);
+  return(millisPartTwo+preparedUniqKey+millisPartOne+random(0,5000000));
 }
 
 bool writeConfig(SDClass sd, StaticJsonDocument<BUFFER_SIZE> CONFIG_SEC, String configLocation) {

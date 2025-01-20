@@ -38,6 +38,8 @@ void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode,
       subnetMask.fromString("255.255.255.0");
       wifi.softAPConfig(ip, gateway, subnetMask);
       Serial.println(wifi.softAPIP());
+      OBTAINED_DEV_IP = wifi.softAPIP().toString();
+      
       break;
     case NETWORK_MODE::HOTSPOT:
 
@@ -56,7 +58,7 @@ void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode,
       } else {
         wifi.softAP(ssid_ap, password_ap);
       }
-
+      OBTAINED_DEV_IP = wifi.softAPIP().toString();
       break;
     case NETWORK_MODE::ACCESS_POINT_DHCP:
 
@@ -70,6 +72,7 @@ void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode,
         delay(1000);
         Serial.println("Connecting to WiFi...");
       }
+      OBTAINED_DEV_IP = wifi.localIP().toString();
       Serial.println(wifi.localIP());
       break;
     case NETWORK_MODE::ACCESS_POINT:
@@ -95,6 +98,7 @@ void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode,
         Serial.println("Connecting to WiFi...");
       }
       Serial.println(wifi.localIP());
+      OBTAINED_DEV_IP = wifi.localIP().toString();
       break;
   }
 

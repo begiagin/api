@@ -1,9 +1,7 @@
 #include <ESP8266WiFi.h>
-#include <WiFiClient.h>
 #include <ESP8266WebServer.h>
 #include <SD.h>
 #include <ArduinoJson.h>
-#include <FS.h>
 #include "dev_api.h"
 #include "connection.h"
 #include "config_loader.h"
@@ -28,9 +26,8 @@ void setup() {
 
 
   // Check JSON Config file is Exist
-  
-  RAM_CFG = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + 
-                               CONFIG_FILE_NAMES[CONF_SECTION::NETWORK]);
+
+  RAM_CFG = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + CONFIG_FILE_NAMES[CONF_SECTION::NETWORK]);
   if (RAM_CFG != null) {
     // Get Network Mode
     auto HOTSPOT_MODE = ((int)RAM_CFG["mode"]) == 1 ? true : false;
@@ -56,7 +53,8 @@ void setup() {
 
   // Initialize and Load all Required files to load WEB Dashboard
 
-  ManageRoutes("index.html", FILE_TYPE::HTML);
+
+  ManageRoutes("login.html", FILE_TYPE::HTML);
   ManageRoutes("css/bootstrap.rtl.css", FILE_TYPE::CSS);
   ManageRoutes("css/style.css", FILE_TYPE::CSS);
   ManageRoutes("css/fonts/Vazir.ttf", FILE_TYPE::CSS);
@@ -69,6 +67,8 @@ void setup() {
   ManageRoutes("js/const-def.js", FILE_TYPE::JS);
   ManageRoutes("js/ui-evt.js", FILE_TYPE::JS);
 
+  checkSessionId();
+
 
   // Handle API Routes
   ManageAPI(WiFi, SD, RAM_CFG);
@@ -78,7 +78,7 @@ void setup() {
 }
 
 
-void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd, 
+void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd,
                StaticJsonDocument<1024>& CFG) {
 
   server.on("/a2d", []() {
@@ -91,6 +91,7 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd,
     handleFileUpload);
 
   server.on("/con_info", [mainWIFI]() {
+    //TODO remove function and replace With Obtained_Dev_Ip
     server.send(200, "application/json", readConnectionProps(mainWIFI));
   });
 
@@ -102,16 +103,14 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd,
     server.send(200, "application/json", getSDCardSize(sd));
   });
 
-  server.on("/get-net-config",[CFG](){
+  server.on("/get-net-config", [CFG]() {
     String output;
-    auto net_setting = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + 
-                               CONFIG_FILE_NAMES[CONF_SECTION::NETWORK]);
-                               
-    serializeJson(net_setting ,output);
-    Serial.println("Get Config with : " + output);
-    server.send(200,"application/json",output);
-    delay(1000);
+    auto net_setting = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + CONFIG_FILE_NAMES[CONF_SECTION::NETWORK]);
 
+    serializeJson(net_setting, output);
+    Serial.println("Get Config with : " + output);
+    server.send(200, "application/json", output);
+    delay(1000);
   });
 
 
@@ -119,11 +118,35 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd,
 
   server.on(
     "/change-net_config", HTTP_POST, [webServer]() {
-      
       auto postResult = postJSON(webServer, CONF_SECTION::NETWORK, SD);
       if (postResult == POST_JSON_RESULT::SUCCESS) {
-
       }
+    });
+
+  server.on(
+    "/login", HTTP_POST, []() {
+      if (server.hasArg("plain")) {
+        StaticJsonDocument<BUFFER_SIZE> doc;
+        DeserializationError error = deserializeJson(doc, server.arg("plain").c_str());
+        if (!error) {
+          String user = doc["usr"];
+          String pass = doc["pass"];
+          USER u = getUserByUserName(user, pass);
+          if (u.userName.length() > 0) {
+            server.sendHeader("Cookie", u.sessionId);
+            server.send(200, "application/json",
+                        POST_JSON_MESSAGES[POST_JSON_RESULT::SUCCESS]);
+          } else {
+            server.send(200, "application/json",
+                        POST_JSON_MESSAGES[POST_JSON_RESULT::DATA_NOT_FOUND]);
+          }
+        } else {
+          server.send(200, "application/json",
+                      POST_JSON_MESSAGES[POST_JSON_RESULT::NOT_OK]);
+        }
+      } else
+        server.send(200, "application/json",
+                    POST_JSON_MESSAGES[POST_JSON_RESULT::BAD_STRUCTURE]);
     });
 }
 void loop() {
@@ -161,12 +184,48 @@ void handleFileUpload() {
   }
 }
 
+void redirectToLogin() {
+  server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  server.sendHeader("Pragma", "no-cache");
+  server.sendHeader("Expires", "0");
+  server.sendHeader("Location", "http://" + OBTAINED_DEV_IP + "/login.html", true);
+  server.send(302, "text/plain", "Redirecting...");
+  Serial.print("Redirecting to : ");
+  Serial.println("http://" + OBTAINED_DEV_IP + "/login.html");
+}
+
+void checkSessionId() {
+  server.on("/", []() {
+    if (server.hasHeader("username")) {
+      Serial.println("Server has username header ");
+
+    } else {
+      redirectToLogin();
+      return;
+    }
+  });
+
+
+  server.on("/index.html", []() {
+    if (server.hasHeader("username")) {
+      ManageRoutes("index.html", FILE_TYPE::HTML);
+
+    } else {
+      redirectToLogin();
+      return;
+    }
+  });
+}
 
 void ManageRoutes(String fileName, FILE_TYPE type) {
   //Serial.println("/"+fileName);
+
   Uri uri = "/" + fileName;
   switch (type) {
     case FILE_TYPE::HTML:
+      if (fileName != "login.html") {
+      }
+
       server.on(uri, [fileName]() {
         //Serial.println(fileName);
         File file = SD.open("/" + fileName);  // Replace with your HTML file name
