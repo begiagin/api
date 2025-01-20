@@ -15,24 +15,39 @@
         $("#btnLogin").click(function () {
           const UserName = $("#userName").val();
           const Password = $("#password").val();
-          const obj = {
-            usr: UserName,
-            pass: Password,
-          };
-          $.ajax({
-            url: "/change-net_config",
-            type: "POST",
-            data: JSON.stringify(netJson),
-            contentType: "application/json",
-            success: function (data) {
-              alert(CS(lang).network_save_cfg_success);
-              return true;
-            },
-            error: function (xhRequest, ErrorText, thrownError) {
-              alert(CS(lang).network_save_cfg_fail);
-              return false;
-            },
-          });
+          if (length(UserName) < 3 || length(Password) < 3) {
+            $("#error_panel")
+              .removeClass("alert-success")
+              .addClass("alert-danger");
+            $("#error_panel").text("بروز خطا - لطفا ورودی ها را چک کنید");
+          } else {
+            const obj = {
+              usr: UserName,
+              pass: Password,
+            };
+            $.ajax({
+              url: "/change-net_config",
+              type: "POST",
+              data: JSON.stringify(obj),
+              contentType: "application/json",
+              success: function (data) {
+                $("#error_panel")
+                  .removeClass("aler-danger")
+                  .addClass("alert-success");
+                $("#error_panel").text("ورود با موفقیت انجام شد");
+                setTimeout(() => {}, 2000);
+                document.location = "/index.html";
+                return true;
+              },
+              error: function (xhRequest, ErrorText, thrownError) {
+                $("#error_panel")
+                  .removeClass("alert-success")
+                  .addClass("alert-danger");
+                $("#error_panel").text("بروز خطا - لطفا ورودی ها را چک کنید");
+                return false;
+              },
+            });
+          }
         });
       });
     </script>
