@@ -6,7 +6,7 @@
 #include "connection.h"
 #include "config_loader.h"
 #include "def.h"
-
+#include "UserMGR.h"
 
 File currentUploadFile;
 
@@ -15,7 +15,10 @@ ESP8266WebServer server(80);
 
 void setup() {
   Serial.begin(115200);
-
+  User u ("Alireza","123456");
+  UserManager mngr;
+  mngr.encryptPassword(&u, u.getPassword());
+  mngr.addUser(&u);
   StaticJsonDocument<BUFFER_SIZE> RAM_CFG;
 
   // Initialize SD card
@@ -24,7 +27,10 @@ void setup() {
     return;
   }
 
-
+  mngr.saveUsersToFile(&SD);
+  //Serial.print("Username Alireza has Pass : ");
+  //Serial.println(mngr.findUser("Alireza")->getPassword());
+  
   // Check JSON Config file is Exist
 
   RAM_CFG = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + CONFIG_FILE_NAMES[CONF_SECTION::NETWORK]);
@@ -119,35 +125,35 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd,
   server.on(
     "/change-net_config", HTTP_POST, [webServer]() {
       auto postResult = postJSON(webServer, CONF_SECTION::NETWORK, SD);
-      if (postResult == POST_JSON_RESULT::SUCCESS) {
+      if (postResult == POST_JSON_RESULT::SUCCESS_RQ) {
       }
     });
 
-  server.on(
-    "/login", HTTP_POST, []() {
-      if (server.hasArg("plain")) {
-        StaticJsonDocument<BUFFER_SIZE> doc;
-        DeserializationError error = deserializeJson(doc, server.arg("plain").c_str());
-        if (!error) {
-          String user = doc["usr"];
-          String pass = doc["pass"];
-          USER u = getUserByUserName(user, pass);
-          if (u.userName.length() > 0) {
-            server.sendHeader("Cookie", u.sessionId);
-            server.send(200, "application/json",
-                        POST_JSON_MESSAGES[POST_JSON_RESULT::SUCCESS]);
-          } else {
-            server.send(200, "application/json",
-                        POST_JSON_MESSAGES[POST_JSON_RESULT::DATA_NOT_FOUND]);
-          }
-        } else {
-          server.send(200, "application/json",
-                      POST_JSON_MESSAGES[POST_JSON_RESULT::NOT_OK]);
-        }
-      } else
-        server.send(200, "application/json",
-                    POST_JSON_MESSAGES[POST_JSON_RESULT::BAD_STRUCTURE]);
-    });
+  // server.on(
+  //   "/login", HTTP_POST, []() {
+  //     if (server.hasArg("plain")) {
+  //       StaticJsonDocument<BUFFER_SIZE> doc;
+  //       DeserializationError error = deserializeJson(doc, server.arg("plain").c_str());
+  //       if (!error) {
+  //         String user = doc["usr"];
+  //         String pass = doc["pass"];
+  //         USER u = getUserByUserName(user, pass);
+  //         if (u.userName.length() > 0) {
+  //           server.sendHeader("Cookie", u.sessionId);
+  //           server.send(200, "application/json",
+  //                       POST_JSON_MESSAGES[POST_JSON_RESULT::SUCCESS_RQ]);
+  //         } else {
+  //           server.send(200, "application/json",
+  //                       POST_JSON_MESSAGES[POST_JSON_RESULT::DATA_NOT_FOUND]);
+  //         }
+  //       } else {
+  //         server.send(200, "application/json",
+  //                     POST_JSON_MESSAGES[POST_JSON_RESULT::NOT_OK]);
+  //       }
+  //     } else
+  //       server.send(200, "application/json",
+  //                   POST_JSON_MESSAGES[POST_JSON_RESULT::BAD_STRUCTURE]);
+  //   });
 }
 void loop() {
   server.handleClient();

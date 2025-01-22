@@ -2,15 +2,26 @@
 #include <sys/types.h>
 #include <Arduino_JSON.h>
 #include <ArduinoJson.h>
+
+
 #ifndef BUFFER_SIZE
 #define BUFFER_SIZE 1024
 #endif
+
+#ifndef PREFIX_SALT
+#define PREFIX_SALT "HaLATA"
+#endif
+
+#ifndef POSTFIX_SALT
+#define POSTFIX_SALT "NAMEOFGREATEGOD"
+#endif
+
 
 #ifndef POST_RESULT_H  
 #define POST_RESULT_H  
 
 enum POST_JSON_RESULT {
-  SUCCESS = 0,
+  SUCCESS_RQ = 0,
   NOT_OK,
   BAD_STRUCTURE,
   DATA_NOT_FOUND
@@ -25,7 +36,8 @@ enum CONF_SECTION {
   SD_CARD,
   MEMEORY,
   BEHAVIOR,
-  PROG
+  PROG,
+  USERS_JSON_FILE
 };
 #endif // CONF_SECTION_H  
 
@@ -43,13 +55,23 @@ enum NETWORK_MODE {
 #ifndef DEFINE_MAIN_VARIABLES_H
 #define DEFINE_MAIN_VARIABLES_H
 
+enum FILE_TYPE {
+  HTML = 0,
+  CSS,
+  JS,
+  JSON_FILE,
+  CONFIG,
+  FONT, 
+  USERS_JSON
+};
+
 String POST_JSON_MESSAGES[] = {
   "{ \"data\": \"SUCCESS\" }",
   "{ \"data\": \"FAIL\" }",
   "{ \"data\": \"BAD_ARG\" }",
   "{ \"data\": \"DATA_NOT_FOUND\" }"
 };
-String DIR_PATH[] = { "/", "/css/", "/js/", "/json/", "/config/", "/css/fonts/" };
+String DIR_PATH[] = { "/", "/css/", "/js/", "/json/", "/config/", "/css/fonts/", "/data/" };
 
 const char* ssid_sta = "MobileAP";          // Your WiFi network SSID
 const char* password_sta = "Aa1364123110";  // Your WiFi network password
@@ -57,25 +79,7 @@ const char* password_sta = "Aa1364123110";  // Your WiFi network password
 const char* ssid_ap = "ESP8266_AP";    // Access Point SSID
 const char* password_ap = "12345678";  // Access Point password
 
-enum FILE_TYPE {
-  HTML = 0,
-  CSS,
-  JS,
-  JSON_FILE,
-  CONFIG,
-  FONT
-};
 
-struct USER{
-  
-  String userName;
-  String lastLogin;
-  String sessionId;
-  bool isLoggedIn;
-};
-
-USER getUserByUserName(String& USER_NAME, String& PASSWORD);
-String createUinqueSessionId(String& USERNAME);
 
 String OBTAINED_DEV_IP;
 String CONFIG_FILE_NAMES[] = {
@@ -83,7 +87,8 @@ String CONFIG_FILE_NAMES[] = {
   "sd_card.json", 
   "memory.json",
   "behavior.json",
-  "prog.json"
+  "prog.json",
+  "users.json"
 };
 //String NETOWRK_JSON_KEYS = {"mode","dhcp","ip","gw","sm","pd","sd","wn","wp"};
 

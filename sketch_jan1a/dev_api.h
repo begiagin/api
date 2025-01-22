@@ -66,22 +66,22 @@ POST_JSON_RESULT postJSON(ESP8266WebServer* server, CONF_SECTION section, SDClas
     case CONF_SECTION::SD_CARD :  
       break; 
   }
-  server->send(200, "application/json", POST_JSON_MESSAGES[(int)POST_JSON_RESULT::SUCCESS]);
+  server->send(200, "application/json", POST_JSON_MESSAGES[(int)POST_JSON_RESULT::SUCCESS_RQ]);
 
-  return POST_JSON_RESULT::SUCCESS;
+  return POST_JSON_RESULT::SUCCESS_RQ;
 }
 
-USER getUserByUserName(String& userName, String& password){
+// USER getUserByUserName(String& userName, String& password){
 
 
-  // TODO Implement User found from User Database
-  USER usr;
-  if(userName == "admin" && password == "admin"){
-    usr.userName = userName;
-    usr.isLoggedIn = true;
-    usr.lastLogin = "now";
-    usr.sessionId = createUinqueSessionId(userName);
-  } 
+//   // TODO Implement User found from User Database
+//   USER usr;
+//   if(userName == "admin" && password == "admin"){
+//     usr.userName = userName;
+//     usr.isLoggedIn = true;
+//     usr.lastLogin = "now";
+//     usr.sessionId = createUinqueSessionId(userName);
+//   } 
 
-  return usr;
-}
+//   return usr;
+// }
