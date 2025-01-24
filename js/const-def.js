@@ -5,7 +5,8 @@
                 network_setting_error : "لطفاً تنظیمات شبکه را بررسی نمائید",
                 network_wifi_name : "نام شبکه را به درستی وارد نمائید",
                 network_save_cfg_success : "ذخیره با موفقیت انجام شد",
-                network_save_cfg_fail : "ذخیره پیگربندی شبکه با خطا مواجه شد "
+                network_save_cfg_fail : "ذخیره پیگربندی شبکه با خطا مواجه شد ",
+                user_or_pass_invalid : "نام کاربری و یا رمز عبور اشتباه است"
             }
     
         default:

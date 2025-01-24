@@ -15,10 +15,11 @@
         $("#btnLogin").click(function () {
           const UserName = $("#userName").val();
           const Password = $("#password").val();
-          if (length(UserName) < 3 || length(Password) < 3) {
+          if (UserName.length < 3 || Password.length < 3) {
             $("#error_panel")
               .removeClass("alert-success")
-              .addClass("alert-danger");
+              .addClass("alert-danger")
+              .css({ display: "block" });
             $("#error_panel").text("بروز خطا - لطفا ورودی ها را چک کنید");
           } else {
             const obj = {
@@ -26,14 +27,15 @@
               pass: Password,
             };
             $.ajax({
-              url: "/change-net_config",
+              url: "/login",
               type: "POST",
               data: JSON.stringify(obj),
               contentType: "application/json",
               success: function (data) {
                 $("#error_panel")
                   .removeClass("aler-danger")
-                  .addClass("alert-success");
+                  .addClass("alert-success")
+                  .css({ display: "block" });
                 $("#error_panel").text("ورود با موفقیت انجام شد");
                 setTimeout(() => {}, 2000);
                 document.location = "/index.html";
@@ -42,7 +44,8 @@
               error: function (xhRequest, ErrorText, thrownError) {
                 $("#error_panel")
                   .removeClass("alert-success")
-                  .addClass("alert-danger");
+                  .addClass("alert-danger")
+                  .css({ display: "none" });
                 $("#error_panel").text("بروز خطا - لطفا ورودی ها را چک کنید");
                 return false;
               },
@@ -117,6 +120,7 @@
                   <button
                     data-mdb-button-init
                     data-mdb-ripple-init
+                    id="btnLogin"
                     class="btn btn-outline-light btn-lg px-5 mt-3"
                     type="submit"
                   >
