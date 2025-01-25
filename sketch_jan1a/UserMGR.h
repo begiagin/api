@@ -62,6 +62,9 @@ public:
     SessionExpiration = sessionEXP;
   }
 
+  String getSessionId(){
+    return SessionId;
+  }
   unsigned long getSessionExpiration() {
     return SessionExpiration;
   }
@@ -77,7 +80,7 @@ public:
   bool removeUser(const String& userName);
   User* findUser(String username);
   String padString(String str, int fixedLength);
-  void encryptPassword(User* u, String plainPassword);
+  String encryptPassword(String plainPassword);
   byte* toByte(String str);
   String stringToHex(String input);
   String hexToString(String hexInput);
@@ -103,7 +106,9 @@ void UserManager::saveUsersToFile(SDClass* sd) {
 }
 
 void UserManager::loadUsersFromFile(SDClass* sd) {
-  File file = sd->open(DIR_PATH[FILE_TYPE::USERS_JSON] + CONFIG_FILE_NAMES[CONF_SECTION::USERS_JSON_FILE], FILE_WRITE);
+  String fileName = DIR_PATH[FILE_TYPE::USERS_JSON] + CONFIG_FILE_NAMES[CONF_SECTION::USERS_JSON_FILE];
+  //Serial.println(fileName);
+  File file = sd->open(fileName, FILE_READ);
   if (!file) {
     Serial.println("Failed to open file for reading");
     return;
@@ -114,18 +119,20 @@ void UserManager::loadUsersFromFile(SDClass* sd) {
 
   // Read each line (user) and deserialize the JSON back into user objects
   while (file.available()) {
+    //
     String line = file.readStringUntil('\n');
     User user;
     user.fromJson(line);
+    //Serial.println(user.getUsername());
     users.push_back(user);
   }
   file.close();
-  Serial.println("Users loaded from file");
+  //Serial.println("Users loaded from file");
 }
 
-void UserManager::encryptPassword(User* u, String Password) {
+String UserManager::encryptPassword(String Password) {
   experimental::crypto::SHA256 hash;
-  u->setPassword(hash.hash(PREFIX_SALT + Password + POSTFIX_SALT));
+  return hash.hash(PREFIX_SALT + Password + POSTFIX_SALT);
 }
 
 void UserManager::addUser(User* u) {

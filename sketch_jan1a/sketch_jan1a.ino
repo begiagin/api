@@ -15,10 +15,7 @@ ESP8266WebServer server(80);
 
 void setup() {
   Serial.begin(115200);
-  User u ("Alireza","123456");
-  UserManager mngr;
-  mngr.encryptPassword(&u, u.getPassword());
-  mngr.addUser(&u);
+
   StaticJsonDocument<BUFFER_SIZE> RAM_CFG;
 
   // Initialize SD card
@@ -27,10 +24,7 @@ void setup() {
     return;
   }
 
-  mngr.saveUsersToFile(&SD);
-  //Serial.print("Username Alireza has Pass : ");
-  //Serial.println(mngr.findUser("Alireza")->getPassword());
-  
+
   // Check JSON Config file is Exist
 
   RAM_CFG = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + CONFIG_FILE_NAMES[CONF_SECTION::NETWORK]);
@@ -55,7 +49,8 @@ void setup() {
     }
   }
 
-
+  // Handle Login endpoit
+  handleLogin();
 
   // Initialize and Load all Required files to load WEB Dashboard
 
@@ -78,7 +73,7 @@ void setup() {
 
   // Handle API Routes
   ManageAPI(WiFi, SD, RAM_CFG);
-
+  
   server.begin();
   Serial.println("HTTP server started");
 }
@@ -128,37 +123,39 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd,
       if (postResult == POST_JSON_RESULT::SUCCESS_RQ) {
       }
     });
-
-  // server.on(
-  //   "/login", HTTP_POST, []() {
-  //     if (server.hasArg("plain")) {
-  //       StaticJsonDocument<BUFFER_SIZE> doc;
-  //       DeserializationError error = deserializeJson(doc, server.arg("plain").c_str());
-  //       if (!error) {
-  //         String user = doc["usr"];
-  //         String pass = doc["pass"];
-  //         USER u = getUserByUserName(user, pass);
-  //         if (u.userName.length() > 0) {
-  //           server.sendHeader("Cookie", u.sessionId);
-  //           server.send(200, "application/json",
-  //                       POST_JSON_MESSAGES[POST_JSON_RESULT::SUCCESS_RQ]);
-  //         } else {
-  //           server.send(200, "application/json",
-  //                       POST_JSON_MESSAGES[POST_JSON_RESULT::DATA_NOT_FOUND]);
-  //         }
-  //       } else {
-  //         server.send(200, "application/json",
-  //                     POST_JSON_MESSAGES[POST_JSON_RESULT::NOT_OK]);
-  //       }
-  //     } else
-  //       server.send(200, "application/json",
-  //                   POST_JSON_MESSAGES[POST_JSON_RESULT::BAD_STRUCTURE]);
-  //   });
 }
 void loop() {
   server.handleClient();
 }
 
+
+void handleLogin() {
+  server.on(
+    "/login", HTTP_POST, []() {
+      if (server.hasArg("plain")) {
+        StaticJsonDocument<BUFFER_SIZE> doc;
+        DeserializationError error = deserializeJson(doc, server.arg("plain").c_str());
+        if (!error) {
+          String user = doc["usr"];
+          String pass = doc["pass"];
+          UserManager mgr;
+          mgr.loadUsersFromFile(&SD);
+          User* u = mgr.findUser(user);
+          if (u) {
+            auto encPass = mgr.encryptPassword(pass);
+            if (encPass == u->getPassword()) {
+              mgr.createSession(u->getUsername());
+              server.sendHeader("SessionId", u->getSessionId());
+              server.sendHeader("Session-Expiretion", String(u->getSessionExpiration()));
+              server.send(200, "text/plain", "User and Pass is correct");
+            }
+          } else {
+            server.send(403, "text/plain", "Forbiden");
+          }
+        }
+      }
+    });
+}
 
 void handleFileUpload() {
   HTTPUpload& upload = server.upload();
@@ -191,6 +188,7 @@ void handleFileUpload() {
 }
 
 void redirectToLogin() {
+  
   server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   server.sendHeader("Pragma", "no-cache");
   server.sendHeader("Expires", "0");
@@ -202,9 +200,8 @@ void redirectToLogin() {
 
 void checkSessionId() {
   server.on("/", []() {
-    if (server.hasHeader("username")) {
-      Serial.println("Server has username header ");
-
+    if (server.hasHeader("SessionId")) {
+      // TODO Extrac Check
     } else {
       redirectToLogin();
       return;
@@ -213,7 +210,7 @@ void checkSessionId() {
 
 
   server.on("/index.html", []() {
-    if (server.hasHeader("username")) {
+    if (server.hasHeader("SessionId")) {
       ManageRoutes("index.html", FILE_TYPE::HTML);
 
     } else {
@@ -234,7 +231,7 @@ void ManageRoutes(String fileName, FILE_TYPE type) {
 
       server.on(uri, [fileName]() {
         //Serial.println(fileName);
-        File file = SD.open("/" + fileName);  // Replace with your HTML file name
+        File file = SD.open("/" + fileName);  
         if (file) {
           server.streamFile(file, "text/html");
           file.close();
@@ -246,7 +243,7 @@ void ManageRoutes(String fileName, FILE_TYPE type) {
     case FILE_TYPE::JS:
       server.on("/" + fileName, [fileName]() {
         //Serial.println(fileName);
-        File file = SD.open("/" + fileName);  // Replace with your HTML file name
+        File file = SD.open("/" + fileName);  
         if (file) {
           server.streamFile(file, "text/javascript");
           file.close();
@@ -258,7 +255,7 @@ void ManageRoutes(String fileName, FILE_TYPE type) {
     case FILE_TYPE::CSS:
       server.on("/" + fileName, [fileName]() {
         //Serial.println(fileName);
-        File file = SD.open("/" + fileName);  // Replace with your HTML file name
+        File file = SD.open("/" + fileName);  
         if (file) {
           server.streamFile(file, "text/stylesheet");
           file.close();
@@ -270,7 +267,7 @@ void ManageRoutes(String fileName, FILE_TYPE type) {
     case FILE_TYPE::FONT:
       server.on("/" + fileName, [fileName]() {
         //Serial.println(fileName);
-        File file = SD.open("/" + fileName);  // Replace with your HTML file name
+        File file = SD.open("/" + fileName);  
         if (file) {
           server.streamFile(file, "application/x-font-ttf");
           file.close();
