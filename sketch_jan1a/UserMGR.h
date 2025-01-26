@@ -13,7 +13,11 @@ private:
   String SessionId;
   unsigned long SessionExpiration;  // زمان انقضا
 
+
 public:
+  String IPAddr;
+  bool isLogin = false;
+
   User(){}
   User(String uName, String pWord)
     : Username(uName), Password(pWord) {}
@@ -79,6 +83,7 @@ public:
   void saveUsersToFile(SDClass* sd);
   bool removeUser(const String& userName);
   User* findUser(String username);
+  User* findUserByIp(String username);
   String padString(String str, int fixedLength);
   String encryptPassword(String plainPassword);
   byte* toByte(String str);
@@ -157,6 +162,17 @@ User* UserManager::findUser(String username) {
   }
   return nullptr;  // کاربر پیدا نشد
 }
+
+
+User* UserManager::findUserByIp(String ipAddr) {
+  for (auto& user : users) {
+    if (user.IPAddr == ipAddr && user.isLogin) {
+      return &user;  // بازگشت اشاره‌گر به کاربر
+    }
+  }
+  return nullptr;  // کاربر پیدا نشد
+}
+
 
 String UserManager::padString(String str, int fixedLength) {
 

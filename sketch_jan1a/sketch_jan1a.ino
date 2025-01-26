@@ -11,7 +11,8 @@
 File currentUploadFile;
 
 ESP8266WebServer server(80);
-
+UserManager mgr;
+          
 
 void setup() {
   Serial.begin(115200);
@@ -24,6 +25,7 @@ void setup() {
     return;
   }
 
+  mgr.loadUsersFromFile(&SD);
 
   // Check JSON Config file is Exist
 
@@ -138,14 +140,16 @@ void handleLogin() {
         if (!error) {
           String user = doc["usr"];
           String pass = doc["pass"];
-          UserManager mgr;
-          mgr.loadUsersFromFile(&SD);
+          
           User* u = mgr.findUser(user);
           if (u) {
             auto encPass = mgr.encryptPassword(pass);
             if (encPass == u->getPassword()) {
               mgr.createSession(u->getUsername());
+              u->isLogin = true;
+              u->IPAddr = server.client().remoteIP().toString(); 
               server.sendHeader("SessionId", u->getSessionId());
+              ManageRoutes("index.html", FILE_TYPE::HTML);
               server.sendHeader("Session-Expiretion", String(u->getSessionExpiration()));
               server.send(200, "text/plain", "User and Pass is correct");
             }
@@ -199,20 +203,11 @@ void redirectToLogin() {
 }
 
 void checkSessionId() {
+  
   server.on("/", []() {
-    if (server.hasHeader("SessionId")) {
+    User* u = mgr.findUser(server.client().remoteIP().toString());
+    if (u != nullptr) {
       // TODO Extrac Check
-    } else {
-      redirectToLogin();
-      return;
-    }
-  });
-
-
-  server.on("/index.html", []() {
-    if (server.hasHeader("SessionId")) {
-      ManageRoutes("index.html", FILE_TYPE::HTML);
-
     } else {
       redirectToLogin();
       return;

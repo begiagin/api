@@ -1,10 +1,10 @@
 const lang = document.body.lang;
 
 $(document).ready(function () {
-  readA2D();
+  //readA2D();
   readConnectionStatus();
-  readHardwareInfo();
-  readSDInfo();
+  //readHardwareInfo();
+  //readSDInfo();
   getNetworkConfig("network", function (data) {
     console.log(data);
     setNetworkSetting(data);
