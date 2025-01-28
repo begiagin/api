@@ -12,10 +12,10 @@ File currentUploadFile;
 
 ESP8266WebServer server(80);
 UserManager mgr;
-          
+
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(74880);
 
   StaticJsonDocument<BUFFER_SIZE> RAM_CFG;
 
@@ -34,8 +34,7 @@ void setup() {
     // Get Network Mode
     auto HOTSPOT_MODE = ((int)RAM_CFG["mode"]) == 1 ? true : false;
     auto DHCP_ENABLE = ((int)RAM_CFG["dhcp"]) == 1 ? true : false;
-    Serial.println(HOTSPOT_MODE);
-    Serial.println(DHCP_ENABLE);
+
     if (HOTSPOT_MODE) {
       if (DHCP_ENABLE) {
         connectToNetowrk(WiFi, NETWORK_MODE::HOTSPOT_DHCP, RAM_CFG);
@@ -75,7 +74,7 @@ void setup() {
 
   // Handle API Routes
   ManageAPI(WiFi, SD, RAM_CFG);
-  
+
   server.begin();
   Serial.println("HTTP server started");
 }
@@ -83,10 +82,6 @@ void setup() {
 
 void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd,
                StaticJsonDocument<1024>& CFG) {
-
-  server.on("/a2d", []() {
-    server.send(200, "application/json", readA2D());
-  });
   server.on(
     "/upload", HTTP_POST, []() {
       server.send(200, "text/plain", "Upload Successfuly Done !");
@@ -96,14 +91,6 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd,
   server.on("/con_info", [mainWIFI]() {
     //TODO remove function and replace With Obtained_Dev_Ip
     server.send(200, "application/json", readConnectionProps(mainWIFI));
-  });
-
-  server.on("/hw_info", []() {
-    server.send(200, "application/json", readHW());
-  });
-
-  server.on("/sd_info", [sd]() {
-    server.send(200, "application/json", getSDCardSize(sd));
   });
 
   server.on("/get-net-config", [CFG]() {
@@ -140,14 +127,14 @@ void handleLogin() {
         if (!error) {
           String user = doc["usr"];
           String pass = doc["pass"];
-          
+
           User* u = mgr.findUser(user);
           if (u) {
             auto encPass = mgr.encryptPassword(pass);
             if (encPass == u->getPassword()) {
               mgr.createSession(u->getUsername());
               u->isLogin = true;
-              u->IPAddr = server.client().remoteIP().toString(); 
+              u->IPAddr = server.client().remoteIP().toString();
               server.sendHeader("SessionId", u->getSessionId());
               ManageRoutes("index.html", FILE_TYPE::HTML);
               server.sendHeader("Session-Expiretion", String(u->getSessionExpiration()));
@@ -192,7 +179,7 @@ void handleFileUpload() {
 }
 
 void redirectToLogin() {
-  
+
   server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   server.sendHeader("Pragma", "no-cache");
   server.sendHeader("Expires", "0");
@@ -203,9 +190,9 @@ void redirectToLogin() {
 }
 
 void checkSessionId() {
-  
+
   server.on("/", []() {
-    User* u = mgr.findUser(server.client().remoteIP().toString());
+    User* u = mgr.findUserByIp(server.client().remoteIP().toString());
     if (u != nullptr) {
       // TODO Extrac Check
     } else {
@@ -226,7 +213,7 @@ void ManageRoutes(String fileName, FILE_TYPE type) {
 
       server.on(uri, [fileName]() {
         //Serial.println(fileName);
-        File file = SD.open("/" + fileName);  
+        File file = SD.open("/" + fileName);
         if (file) {
           server.streamFile(file, "text/html");
           file.close();
@@ -238,7 +225,7 @@ void ManageRoutes(String fileName, FILE_TYPE type) {
     case FILE_TYPE::JS:
       server.on("/" + fileName, [fileName]() {
         //Serial.println(fileName);
-        File file = SD.open("/" + fileName);  
+        File file = SD.open("/" + fileName);
         if (file) {
           server.streamFile(file, "text/javascript");
           file.close();
@@ -250,7 +237,7 @@ void ManageRoutes(String fileName, FILE_TYPE type) {
     case FILE_TYPE::CSS:
       server.on("/" + fileName, [fileName]() {
         //Serial.println(fileName);
-        File file = SD.open("/" + fileName);  
+        File file = SD.open("/" + fileName);
         if (file) {
           server.streamFile(file, "text/stylesheet");
           file.close();
@@ -262,7 +249,7 @@ void ManageRoutes(String fileName, FILE_TYPE type) {
     case FILE_TYPE::FONT:
       server.on("/" + fileName, [fileName]() {
         //Serial.println(fileName);
-        File file = SD.open("/" + fileName);  
+        File file = SD.open("/" + fileName);
         if (file) {
           server.streamFile(file, "application/x-font-ttf");
           file.close();
