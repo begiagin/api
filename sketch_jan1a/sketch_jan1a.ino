@@ -64,7 +64,6 @@ void setup() {
   ManageRoutes("js/JQuery.js", FILE_TYPE::JS);
   ManageRoutes("js/sensors.js", FILE_TYPE::JS);
   ManageRoutes("js/settings.js", FILE_TYPE::JS);
-  ManageRoutes("js/data-validator.js", FILE_TYPE::JS);
   ManageRoutes("js/api.js", FILE_TYPE::JS);
   ManageRoutes("js/const-def.js", FILE_TYPE::JS);
   ManageRoutes("js/ui-evt.js", FILE_TYPE::JS);
@@ -257,8 +256,6 @@ void ManageRoutes(String fileName, FILE_TYPE type) {
           server.send(200, "text/plain", "Failed to open font file");
         }
       });
-
-      //application/x-font-ttf
     default:
       break;
   }
