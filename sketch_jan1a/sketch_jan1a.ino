@@ -2,17 +2,42 @@
 #include <ESP8266WebServer.h>
 #include <SD.h>
 #include <ArduinoJson.h>
-#include "dev_api.h"
 #include "connection.h"
 #include "config_loader.h"
 #include "def.h"
 #include "UserMGR.h"
+#include "board_handels.h"
 
 File currentUploadFile;
-
-ESP8266WebServer server(80);
 UserManager mgr;
 
+void boardCheckerSetup(){
+
+  Serial.println("\r\n");
+  pinMode(PNP1, OUTPUT);
+  pinMode(Relay, OUTPUT);
+  pinMode(NPN1, OUTPUT);
+  pinMode(NPN2, OUTPUT);
+
+  pinMode(RCLK, OUTPUT);
+  pinMode(SRCLK, OUTPUT);
+  pinMode(SER, OUTPUT);
+
+  pinMode(ProxyUp, INPUT_PULLUP);
+  pinMode(ProxyDown, INPUT_PULLUP);
+
+  digitalWrite(PNP1, HIGH);     // Turn it OFF by default.
+  SPIx80(HIGH);       // Reset spi------------------------
+  //  goOTA();
+
+
+  server.on("/MotorSet", Motor_control);
+  server.on("/adcread", sensor_data);
+  server.on("/RemoteNo", RemoteNoFUN);
+  server.on("/checkey", Test12v);
+  server.on("/check", checkFUN);
+  server.begin();  
+}
 
 void setup() {
   Serial.begin(74880);
@@ -30,7 +55,7 @@ void setup() {
   // Check JSON Config file is Exist
 
   RAM_CFG = readJsonString(SD, DIR_PATH[FILE_TYPE::CONFIG] + CONFIG_FILE_NAMES[CONF_SECTION::NETWORK]);
-  if (RAM_CFG != null) {
+  if (!RAM_CFG.isNull()) {
     // Get Network Mode
     auto HOTSPOT_MODE = ((int)RAM_CFG["mode"]) == 1 ? true : false;
     auto DHCP_ENABLE = ((int)RAM_CFG["dhcp"]) == 1 ? true : false;
@@ -54,42 +79,40 @@ void setup() {
   handleLogin();
 
   // Initialize and Load all Required files to load WEB Dashboard
+  loadHTMLFiles();
 
+  // Board Checker Setup 
+  boardCheckerSetup();
 
-  ManageRoutes("login.html", FILE_TYPE::HTML);
-  ManageRoutes("css/bootstrap.rtl.css", FILE_TYPE::CSS);
-  ManageRoutes("css/style.css", FILE_TYPE::CSS);
-  ManageRoutes("css/fonts/Vazir.ttf", FILE_TYPE::CSS);
-  ManageRoutes("js/bootstrap.min.js", FILE_TYPE::JS);
-  ManageRoutes("js/JQuery.js", FILE_TYPE::JS);
-  ManageRoutes("js/sensors.js", FILE_TYPE::JS);
-  ManageRoutes("js/settings.js", FILE_TYPE::JS);
-  ManageRoutes("js/api.js", FILE_TYPE::JS);
-  ManageRoutes("js/const-def.js", FILE_TYPE::JS);
-  ManageRoutes("js/ui-evt.js", FILE_TYPE::JS);
-
-  checkSessionId();
-
+  // Check client ip address for checking Login Status
+  isThisIpLoggedIn();
 
   // Handle API Routes
   ManageAPI(WiFi, SD, RAM_CFG);
-
+  
+  // Initial HTTP Server and Start it , Start listening on PORT 80, answer all incomming Requests 
   server.begin();
   Serial.println("HTTP server started");
+
 }
 
 
 void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd,
                StaticJsonDocument<1024>& CFG) {
+
+  ESP8266WebServer* webServer = &server;
+
+  //Endpoint for Upload all Types of file
   server.on(
     "/upload", HTTP_POST, []() {
       server.send(200, "text/plain", "Upload Successfuly Done !");
     },
     handleFileUpload);
 
+  // Endpoint for Read Connection Properties
   server.on("/con_info", [mainWIFI]() {
     //TODO remove function and replace With Obtained_Dev_Ip
-    server.send(200, "application/json", readConnectionProps(mainWIFI));
+    server.send(200, "application/json", "{ \n \"ip_addr\":\"" + OBTAINED_DEV_IP + "\"\n}");
   });
 
   server.on("/get-net-config", [CFG]() {
@@ -102,9 +125,6 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd,
     delay(1000);
   });
 
-
-  ESP8266WebServer* webServer = &server;
-
   server.on(
     "/change-net_config", HTTP_POST, [webServer]() {
       auto postResult = postJSON(webServer, CONF_SECTION::NETWORK, SD);
@@ -114,6 +134,19 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd,
 }
 void loop() {
   server.handleClient();
+
+  if (!digitalRead(NPN1) && digitalRead(ProxyDown)) {
+    Serial.println("DOWN OVER");
+    isDOWN = false;
+    checkDOWN = true;
+  }
+  if (!digitalRead(NPN2) && digitalRead(ProxyUp)) {
+    Serial.println("UP OVER");
+    isUP = false;
+    checkUP = true;
+  }
+  digitalWrite(NPN1, !isDOWN);
+  digitalWrite(NPN2, !isUP);
 }
 
 
@@ -160,16 +193,13 @@ void handleFileUpload() {
         SD.remove(fileName);
       }
       currentUploadFile = SD.open(fileName, FILE_WRITE);
-      //Serial.println(fileName + " Created !");
       break;
     case UPLOAD_FILE_WRITE:
-      //Serial.println(fileName + " is Writing !");
       if (currentUploadFile) {
         currentUploadFile.write(upload.buf, upload.currentSize);
       }
       break;
     case UPLOAD_FILE_END:
-      //Serial.println(fileName + " Creation Finished !");
       if (currentUploadFile) {
         currentUploadFile.close();
       }
@@ -188,7 +218,7 @@ void redirectToLogin() {
   Serial.println("http://" + OBTAINED_DEV_IP + "/login.html");
 }
 
-void checkSessionId() {
+void isThisIpLoggedIn() {
 
   server.on("/", []() {
     User* u = mgr.findUserByIp(server.client().remoteIP().toString());
@@ -201,62 +231,54 @@ void checkSessionId() {
   });
 }
 
+void loadHTMLFiles() {
+  ManageRoutes("login.html", FILE_TYPE::HTML);
+  ManageRoutes("commands.html", FILE_TYPE::HTML);
+  ManageRoutes("css/bootstrap.rtl.css", FILE_TYPE::CSS);
+  ManageRoutes("css/style.css", FILE_TYPE::CSS);
+  ManageRoutes("css/fonts/Vazir.ttf", FILE_TYPE::CSS);
+  ManageRoutes("js/bootstrap.min.js", FILE_TYPE::JS);
+  ManageRoutes("js/JQuery.js", FILE_TYPE::JS);
+  ManageRoutes("js/sensors.js", FILE_TYPE::JS);
+  ManageRoutes("js/settings.js", FILE_TYPE::JS);
+  ManageRoutes("js/api.js", FILE_TYPE::JS);
+  ManageRoutes("js/const-def.js", FILE_TYPE::JS);
+  ManageRoutes("js/ui-evt.js", FILE_TYPE::JS);
+}
+
+
 void ManageRoutes(String fileName, FILE_TYPE type) {
   //Serial.println("/"+fileName);
 
   Uri uri = "/" + fileName;
+  String fileTypeToRender = "";
   switch (type) {
     case FILE_TYPE::HTML:
       if (fileName != "login.html") {
       }
-
-      server.on(uri, [fileName]() {
-        //Serial.println(fileName);
-        File file = SD.open("/" + fileName);
-        if (file) {
-          server.streamFile(file, "text/html");
-          file.close();
-        } else {
-          server.send(200, "text/plain", "Failed to open HTML file");
-        }
-      });
+      fileTypeToRender = "text/html";
       break;
     case FILE_TYPE::JS:
-      server.on("/" + fileName, [fileName]() {
-        //Serial.println(fileName);
-        File file = SD.open("/" + fileName);
-        if (file) {
-          server.streamFile(file, "text/javascript");
-          file.close();
-        } else {
-          server.send(200, "text/plain", "Failed to open HTML file");
-        }
-      });
+      fileTypeToRender = "text/javascript";
       break;
     case FILE_TYPE::CSS:
-      server.on("/" + fileName, [fileName]() {
-        //Serial.println(fileName);
-        File file = SD.open("/" + fileName);
-        if (file) {
-          server.streamFile(file, "text/stylesheet");
-          file.close();
-        } else {
-          server.send(200, "text/plain", "Failed to open CSS file");
-        }
-      });
+      fileTypeToRender = "text/stylesheet";
       break;
     case FILE_TYPE::FONT:
-      server.on("/" + fileName, [fileName]() {
-        //Serial.println(fileName);
-        File file = SD.open("/" + fileName);
-        if (file) {
-          server.streamFile(file, "application/x-font-ttf");
-          file.close();
-        } else {
-          server.send(200, "text/plain", "Failed to open font file");
-        }
-      });
+      fileTypeToRender = "application/x-font-ttf";
+      break;
     default:
       break;
   }
+
+  server.on(uri, [fileName, fileTypeToRender]() {
+    //Serial.println(fileName);
+    File file = SD.open("/" + fileName);
+    if (file) {
+      server.streamFile(file, fileTypeToRender);
+      file.close();
+    } else {
+      server.send(200, "application/json", POST_JSON_MESSAGES[POST_JSON_RESULT::DATA_NOT_FOUND]);
+    }
+  });
 }

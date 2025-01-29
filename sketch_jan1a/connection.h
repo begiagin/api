@@ -1,3 +1,4 @@
+
 #include "IPAddress.h"
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFi.h>
@@ -68,12 +69,13 @@ void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode,
         wifi.begin(ssid_ap, password_ap);
       }
       NetworkMode = "ACCESS POINT WITH DHCP";
+      Serial.println("Connecting to WiFi...");
       while (wifi.status() != WL_CONNECTED) {
         delay(1000);
-        Serial.println("Connecting to WiFi...");
+        Serial.print(".");
       }
       OBTAINED_DEV_IP = wifi.localIP().toString();
-      Serial.println(wifi.localIP());
+      Serial.println("ESP IP Address : " + OBTAINED_DEV_IP);
       break;
     case NETWORK_MODE::ACCESS_POINT:
 
@@ -91,14 +93,15 @@ void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode,
       } else {
         wifi.begin(ssid_ap, password_ap);
       }
-
+      Serial.println("Connecting to WiFi...");
       NetworkMode = "ACCESS POINT WITH STATIC IP ADDRESS";
       while (wifi.status() != WL_CONNECTED) {
         delay(1000);
-        Serial.println("Connecting to WiFi...");
+        Serial.print(".");
       }
-      Serial.println(wifi.localIP());
+      
       OBTAINED_DEV_IP = wifi.localIP().toString();
+      Serial.println("ESP IP Address : " + OBTAINED_DEV_IP);
       break;
   }
 

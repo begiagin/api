@@ -18,7 +18,7 @@ public:
   String IPAddr;
   bool isLogin = false;
 
-  User(){}
+  User() {}
   User(String uName, String pWord)
     : Username(uName), Password(pWord) {}
   String getUsername() {
@@ -66,7 +66,7 @@ public:
     SessionExpiration = sessionEXP;
   }
 
-  String getSessionId(){
+  String getSessionId() {
     return SessionId;
   }
   unsigned long getSessionExpiration() {
@@ -79,21 +79,26 @@ private:
   std::vector<User> users;
 public:
   UserManager() {}
-  void loadUsersFromFile(SDClass* sd);
-  void saveUsersToFile(SDClass* sd);
-  bool removeUser(const String& userName);
+  ~UserManager() {}
+
   User* findUser(String username);
   User* findUserByIp(String username);
+  byte* toByte(String str);
+
   String padString(String str, int fixedLength);
   String encryptPassword(String plainPassword);
-  byte* toByte(String str);
+  String generateSecureSessionId();
   String stringToHex(String input);
   String hexToString(String hexInput);
+
+  void loadUsersFromFile(SDClass* sd);
+  void saveUsersToFile(SDClass* sd);
   void createSession(String username);
   void handleProtectedResource(String username);
-  bool isSessionValid(String username);
-  String generateSecureSessionId();
   void addUser(User* u);
+
+  bool isSessionValid(String username);
+  bool removeUser(const String& userName);
 };
 void UserManager::saveUsersToFile(SDClass* sd) {
   File file = sd->open(DIR_PATH[FILE_TYPE::USERS_JSON] + CONFIG_FILE_NAMES[CONF_SECTION::USERS_JSON_FILE], FILE_WRITE);
@@ -213,14 +218,11 @@ String UserManager::stringToHex(String input) {
 
 String UserManager::hexToString(String hexInput) {
   String output = "";
-
   if (hexInput.length() % 2 != 0) {
     return output;  // Return an empty string for invalid input
   }
-
   for (size_t i = 0; i < hexInput.length(); i += 2) {
     // Get two characters at a time
-
     String byteString = hexInput.substring(i, i + 2);
     char character = (char)strtol(byteString.c_str(), NULL, 16);
     output += character;
@@ -274,9 +276,7 @@ String UserManager::generateSecureSessionId() {
 
   String sessionId;
   for (int i = 0; i < sizeof(hmacResult); i++) {
-
     char str[3];
-
     sprintf(str, "%02x", (int)hmacResult[i]);
     sessionId += str;
   }

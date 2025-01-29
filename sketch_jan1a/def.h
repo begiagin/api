@@ -1,11 +1,7 @@
-#include "esp8266_peri.h"
-#include <sys/types.h>
-#include <Arduino_JSON.h>
-#include <ArduinoJson.h>
-
 
 #ifndef BUFFER_SIZE
 #define BUFFER_SIZE 1024
+ESP8266WebServer server(80);
 #endif
 
 #ifndef PREFIX_SALT
@@ -92,11 +88,38 @@ String CONFIG_FILE_NAMES[] = {
 };
 //String NETOWRK_JSON_KEYS = {"mode","dhcp","ip","gw","sm","pd","sd","wn","wp"};
 
+
+// Board Checker Variables 
+
 #endif // DEFINE_MAIN_VARIABLES_H
 
 bool writeConfig(SDClass sd, StaticJsonDocument<BUFFER_SIZE> RAM_CONFIG, String configLocation);
+void set_comm(char Rmt[6]);
+
+#ifndef BOARD_CHECKER_H
+#define BOARD_CHECKER_H
+
+#define PNP1          0
+#define Relay         2
+#define NPN1          4
+#define NPN2          15
+#define ProxyDown     5
+#define ProxyUp       16
+#define RCLK          12
+#define SRCLK         14
+#define SER           13
 
 
+/* BEGIN OF BOARD CHECKER VARIABLES */
+bool isOTA;
+bool isUP, isDOWN;
+bool checkUP, checkDOWN;
+
+uint8_t SPI_Array[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+uint8_t Key1_4, Remote1_20, ProgGroup1_10;
+/* END OF BOARD CHECKER VARIABLES */
+
+#endif
 
 
 
