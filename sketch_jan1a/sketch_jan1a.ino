@@ -1,6 +1,6 @@
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
-#include <SD.h>
+#include <FS.h>
 #include <ArduinoJson.h>
 #include "connection.h"
 #include "config_loader.h"
@@ -11,41 +11,41 @@
 File currentUploadFile;
 UserManager mgr;
 
-void boardCheckerSetup(){
+// void boardCheckerSetup(){
 
-  Serial.println("\r\n");
-  pinMode(PNP1, OUTPUT);
-  pinMode(Relay, OUTPUT);
-  pinMode(NPN1, OUTPUT);
-  pinMode(NPN2, OUTPUT);
+//   Serial.println("\r\n");
+//   pinMode(PNP1, OUTPUT);
+//   pinMode(Relay, OUTPUT);
+//   pinMode(NPN1, OUTPUT);
+//   pinMode(NPN2, OUTPUT);
 
-  pinMode(RCLK, OUTPUT);
-  pinMode(SRCLK, OUTPUT);
-  pinMode(SER, OUTPUT);
+//   pinMode(RCLK, OUTPUT);
+//   pinMode(SRCLK, OUTPUT);
+//   pinMode(SER, OUTPUT);
 
-  pinMode(ProxyUp, INPUT_PULLUP);
-  pinMode(ProxyDown, INPUT_PULLUP);
+//   pinMode(ProxyUp, INPUT_PULLUP);
+//   pinMode(ProxyDown, INPUT_PULLUP);
 
-  digitalWrite(PNP1, HIGH);     // Turn it OFF by default.
-  SPIx80(HIGH);       // Reset spi------------------------
-  //  goOTA();
+//   digitalWrite(PNP1, HIGH);     // Turn it OFF by default.
+//   SPIx80(HIGH);       // Reset spi------------------------
+//   //  goOTA();
 
 
-  server.on("/MotorSet", Motor_control);
-  server.on("/adcread", sensor_data);
-  server.on("/RemoteNo", RemoteNoFUN);
-  server.on("/checkey", Test12v);
-  server.on("/check", checkFUN);
-  server.begin();  
-}
+//   server.on("/MotorSet", Motor_control);
+//   server.on("/adcread", sensor_data);
+//   server.on("/RemoteNo", RemoteNoFUN);
+//   server.on("/checkey", Test12v);
+//   server.on("/check", checkFUN);
+  
+// }
 
 void setup() {
-  Serial.begin(74880);
+  Serial.begin(115200);
 
   StaticJsonDocument<BUFFER_SIZE> RAM_CFG;
 
   // Initialize SD card
-  if (!SD.begin(SS)) {
+  if (!SD.begin(16)) {
     Serial.println("SD card initialization failed!");
     return;
   }
@@ -81,9 +81,6 @@ void setup() {
   // Initialize and Load all Required files to load WEB Dashboard
   loadHTMLFiles();
 
-  // Board Checker Setup 
-  boardCheckerSetup();
-
   // Check client ip address for checking Login Status
   isThisIpLoggedIn();
 
@@ -93,6 +90,9 @@ void setup() {
   // Initial HTTP Server and Start it , Start listening on PORT 80, answer all incomming Requests 
   server.begin();
   Serial.println("HTTP server started");
+
+  // Board Checker Setup 
+  //boardCheckerSetup();
 
 }
 
@@ -134,7 +134,7 @@ void ManageAPI(ESP8266WiFiClass& mainWIFI, SDClass& sd,
 }
 void loop() {
   server.handleClient();
-
+/*
   if (!digitalRead(NPN1) && digitalRead(ProxyDown)) {
     Serial.println("DOWN OVER");
     isDOWN = false;
@@ -146,7 +146,7 @@ void loop() {
     checkUP = true;
   }
   digitalWrite(NPN1, !isDOWN);
-  digitalWrite(NPN2, !isUP);
+  digitalWrite(NPN2, !isUP);*/
 }
 
 
@@ -232,6 +232,7 @@ void isThisIpLoggedIn() {
 }
 
 void loadHTMLFiles() {
+  Serial.println("inside of load html files");
   ManageRoutes("login.html", FILE_TYPE::HTML);
   ManageRoutes("commands.html", FILE_TYPE::HTML);
   ManageRoutes("css/bootstrap.rtl.css", FILE_TYPE::CSS);
@@ -252,10 +253,9 @@ void ManageRoutes(String fileName, FILE_TYPE type) {
 
   Uri uri = "/" + fileName;
   String fileTypeToRender = "";
+
   switch (type) {
     case FILE_TYPE::HTML:
-      if (fileName != "login.html") {
-      }
       fileTypeToRender = "text/html";
       break;
     case FILE_TYPE::JS:
@@ -271,10 +271,15 @@ void ManageRoutes(String fileName, FILE_TYPE type) {
       break;
   }
 
+  
+
   server.on(uri, [fileName, fileTypeToRender]() {
     //Serial.println(fileName);
-    File file = SD.open("/" + fileName);
+    File file = SD.open("/" + fileName, FILE_READ);
+    Serial.println("/" + fileName + " would be Render with Type : " + fileTypeToRender);
+    Serial.println(file.getLastWrite());
     if (file) {
+      //server.serveStatic("", &FS, "/index.html");
       server.streamFile(file, fileTypeToRender);
       file.close();
     } else {

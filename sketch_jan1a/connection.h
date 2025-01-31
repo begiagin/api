@@ -28,6 +28,8 @@ void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode,
   const char* SECONDARY_DNS = (const char*)cfg["sd"];
   String NetworkMode = "";
 
+  int connectTimeoutPeriod = 0;
+  bool connectionStablished = true;
 
 
   switch (mode) {
@@ -73,6 +75,11 @@ void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode,
       while (wifi.status() != WL_CONNECTED) {
         delay(1000);
         Serial.print(".");
+        connectTimeoutPeriod++;
+        if(connectTimeoutPeriod > 10){
+          connectionStablished = false;
+          break;
+        }
       }
       OBTAINED_DEV_IP = wifi.localIP().toString();
       Serial.println("ESP IP Address : " + OBTAINED_DEV_IP);
@@ -98,13 +105,28 @@ void connectToNetowrk(ESP8266WiFiClass& wifi, NETWORK_MODE mode,
       while (wifi.status() != WL_CONNECTED) {
         delay(1000);
         Serial.print(".");
+        connectTimeoutPeriod++;
+        if(connectTimeoutPeriod > 10){
+          connectionStablished = false;
+          break;
+        }        
       }
-      
       OBTAINED_DEV_IP = wifi.localIP().toString();
       Serial.println("ESP IP Address : " + OBTAINED_DEV_IP);
       break;
   }
+      if(!connectionStablished){
 
+          NetworkMode = "HOTSPT WITH DHCP ADDRESSING ";
+          wifi.softAP(ssid_ap, password_ap);
+          ip.fromString("192.168.8.8");
+          gateway.fromString("192.168.8.1");
+          subnetMask.fromString("255.255.255.0");
+          wifi.softAPConfig(ip, gateway, subnetMask);
+          Serial.println(wifi.softAPIP());
+          OBTAINED_DEV_IP = wifi.softAPIP().toString();  
+
+      }
 
   Serial.println("Connected to WiFi . Network Mode : " + NetworkMode);
 }

@@ -1,8 +1,8 @@
-#include "SD.h"
+
 #include "Crypto.h"
 #include <iostream>
 #include <vector>
-#include <FS.h>
+
 #include <Seeed_mbedtls.h>
 #include <ArduinoJson.h>
 
@@ -137,7 +137,8 @@ void UserManager::loadUsersFromFile(SDClass* sd) {
     users.push_back(user);
   }
   file.close();
-  //Serial.println("Users loaded from file");
+  Serial.print(users.size());
+  Serial.println(" User loaded from file");
 }
 
 String UserManager::encryptPassword(String Password) {

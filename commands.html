@@ -16,26 +16,27 @@
     <div class="container-fluid">
       <div class="row m-4">
         <button
+        class="btn btn-primary mb-3 custom-h"
+        id="isdownid"
+        onclick="sendUpDn(1,0)"
+      >
+        بالا
+      </button>
+        <button
           class="btn btn-primary custom-h"
           id="isdownid"
           onclick="sendUpDn(0,1)"
         >
           پایین
         </button>
-        <button
-          class="btn btn-primary mt-3 custom-h"
-          id="isdownid"
-          onclick="sendUpDn(1,0)"
-        >
-          بالا
-        </button>
+
       </div>
       <div class="row text-bg-secondary m-4 mt-0 rounded-2 p-2 text-center">
         شمارنده : <span class="" id="adc_val">0</span>
 
         وضعیت نهایی : <span id="state">NA</span>
       </div>
-      <div class="row m-2">
+      <div class="row m-2 mb-5">
         <div class="col-3" style="direction: ltr">
           R:
           <input
@@ -91,8 +92,8 @@
           </button>
         </div>
       </div>
-      <div class="row m-2" style="direction: ltr">
-        <div class="alert alert-dismissible alert-success">
+      <div class="row m-3" style="direction: ltr">
+        <div class="alert mt-5 alert-dismissible alert-success">
           (also Turns 12v supply ON)
         </div>
       </div>
