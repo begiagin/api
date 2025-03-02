@@ -4,8 +4,7 @@
     src: url('fonts/Vazir.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */  
          url('fonts/Vazir.woff2') format('woff2'), /* Super Modern Browsers */  
          url('fonts/Vazir.woff') format('woff'), /* Pretty Modern Browsers */  
-         url('fonts/Vazir.ttf') format('truetype'), /* Safari, Android, iOS */  
-         url('fonts/Vazir.svg#Vazir') format('svg'); /* Legacy iOS */  
+         url('fonts/Vazir.ttf') format('truetype');
     font-weight: normal;  
     font-style: normal;  
 }  
