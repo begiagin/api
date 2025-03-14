@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Beautiful Login Form</title>
+  <!-- Bootstrap CSS -->
+  <link href="./css/bootstrap.rtl.css" rel="stylesheet" />
+  <link rel="stylesheet" href="./css/style.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .login-form {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-form h2 {
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+    .login-form .form-control {
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+    }
+    .login-form .btn {
+      border-radius: 10px;
+      padding: 10px;
+      background: #2575fc;
+      border: none;
+      color: white;
+      font-weight: bold;
+    }
+    .login-form .btn:hover {
+      background: #6a11cb;
+    }
+    .login-form .form-text {
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-form">
+    <h2 class="text-center">ورود به پولادنگار</h2>
+    <form>
+      <div class="mb-3">
+        <label for="username" class="form-label">نام کاربری</label>
+        <input type="text" class="form-control" id="username" placeholder="نام کاربری را وارد نمائید">
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">کلمه عبور</label>
+        <input type="password" class="form-control" id="password" placeholder="کلمه عبور را وارد نمائید">
+      </div>
+      <button type="submit" class="btn w-100">ورود</button>
+    
+    </form>
+  </div>
+
+  <!-- Bootstrap JS (Optional) -->
+  <script src="./js/bootstrap.min.js "></script>
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', function (event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      // Get the values of the username and password fields
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      // Create the data object to send in the POST request
+      const data = {
+        username: username,
+        password: password
+      };
+
+      // Send the POST request to the /login endpoint
+      fetch('/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+      .then(response => {
+        if (response.ok) {
+          return response.json(); // Parse the JSON response
+        } else {
+          throw new Error('Login failed');
+        }
+      })
+      .then(data => {
+        window.location.href = '/index.html'; // Handle successful login
+        console.log(data); // Log the response data
+      })
+      .catch(error => {
+        alert('Login failed. Please check your credentials.'); // Handle login failure
+        console.error(error); // Log the error
+      });
+    });
+  </script>
+</body>
+</html>
